@@ -129,14 +129,14 @@ class AppTheme {
           fontSize: 14,
           color: AppColors.textSecondary,
         ),
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 16,
+        ),
       ),
 
       // Icon Theme
-      iconTheme: const IconThemeData(
-        color: AppColors.primary,
-        size: 24,
-      ),
+      iconTheme: const IconThemeData(color: AppColors.primary, size: 24),
 
       // Progress Indicator Theme
       progressIndicatorTheme: const ProgressIndicatorThemeData(

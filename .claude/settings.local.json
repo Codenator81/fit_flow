@@ -5,7 +5,16 @@
       "Bash(flutter pub get:*)",
       "Bash(flutter analyze:*)",
       "Bash(java -version:*)",
-      "Bash(./gradlew signingReport:*)"
+      "Bash(./gradlew signingReport:*)",
+      "Bash(flutter pub run build_runner:*)",
+      "Bash(flutter clean:*)",
+      "Bash(flutter run:*)",
+      "Bash(flutter build:*)",
+      "Bash(xargs rm:*)",
+      "Bash(dart format:*)",
+      "Bash(ls:*)",
+      "Bash(flutter --version:*)",
+      "Bash(flutter pub:*)"
     ],
     "deny": [],
     "ask": []

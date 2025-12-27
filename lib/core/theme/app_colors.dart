@@ -57,19 +57,18 @@ class AppColors {
   static const glowPurple = Color(0xFFBB86FC);
 
   // Helper method to create gradient
-  static LinearGradient createGradient(List<Color> colors, {
+  static LinearGradient createGradient(
+    List<Color> colors, {
     AlignmentGeometry begin = Alignment.topLeft,
     AlignmentGeometry end = Alignment.bottomRight,
   }) {
-    return LinearGradient(
-      colors: colors,
-      begin: begin,
-      end: end,
-    );
+    return LinearGradient(colors: colors, begin: begin, end: end);
   }
 
   // Predefined gradients for cards
-  static LinearGradient get cardGradientYellow => createGradient(gradientYellow);
-  static LinearGradient get cardGradientOrange => createGradient(gradientOrange);
+  static LinearGradient get cardGradientYellow =>
+      createGradient(gradientYellow);
+  static LinearGradient get cardGradientOrange =>
+      createGradient(gradientOrange);
   static LinearGradient get cardGradientPink => createGradient(gradientPink);
 }
