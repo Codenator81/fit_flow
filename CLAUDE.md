@@ -618,3 +618,8 @@ final url = supabase.storage
 - ✅ ALWAYS handle offline scenarios
 - ✅ ALWAYS use type-safe code
 - ✅ ALWAYS follow Flutter best practices
+- ✅ ALWAYS use AppColors constants (never hardcode colors)
+- ✅ ALWAYS use AppTextStyles for text styling
+- ✅ ALWAYS apply dark theme with orange accents
+- ✅ ALWAYS use white with 0.7 opacity for secondary text
+- ✅ ALWAYS add subtle orange glow to important elements
