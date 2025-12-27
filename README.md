@@ -5,12 +5,11 @@ A modern Flutter fitness app with offline-first architecture and custom workout 
 ## Tech Stack
 
 ### Backend & Database
-- **supabase_flutter** - All-in-one backend solution
-  - PostgreSQL database with offline support
-  - Real-time subscriptions
-  - Authentication (email, OAuth, magic links)
-  - File storage
-  - Edge functions
+- **Firebase** - All-in-one backend solution (100% free on Spark plan)
+  - **cloud_firestore** - NoSQL database with automatic offline persistence
+  - **firebase_auth** - Authentication (email, Google, Apple, etc.)
+  - **firebase_core** - Core Firebase SDK
+  - ~~firebase_storage~~ - Not included (requires Blaze plan)
 
 ### State Management
 - **flutter_bloc** - Business logic component pattern
@@ -37,6 +36,11 @@ A modern Flutter fitness app with offline-first architecture and custom workout 
 ### Internationalization
 - **intl** - Date/time formatting and i18n
 
+### UI Enhancements
+- **google_fonts** - Custom typography (Montserrat, Roboto, etc.)
+- **flutter_animate** - Smooth animations and transitions
+- **fl_chart** - Beautiful charts for progress tracking
+
 ## Project Architecture
 
 ```
@@ -57,7 +61,7 @@ lib/
 - ✅ Custom workout workflows
 - ✅ User authentication
 - ✅ Progress tracking
-- ✅ Cloud backup with Supabase
+- ✅ Cloud backup with Firebase
 
 ## Getting Started
 
@@ -66,9 +70,12 @@ lib/
    flutter pub get
    ```
 
-2. Set up Supabase:
-   - Create a project at [supabase.com](https://supabase.com)
-   - Add your credentials to the app
+2. Set up Firebase:
+   - Create a project at [console.firebase.google.com](https://console.firebase.google.com)
+   - Enable **Firestore Database** (Native mode, Test mode for development)
+   - Enable **Authentication** → Email/Password provider
+   - Download and add config files:
+     - Android: `google-services.json` → `android/app/`
 
 3. Run the app:
    ```bash

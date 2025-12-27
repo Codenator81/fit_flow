@@ -1,7 +1,7 @@
 # FitFlow - Project Guidelines for Claude
 
 ## Project Overview
-This is a modern Flutter fitness app with offline-first architecture, custom workout workflows, and Supabase backend.
+This is a modern Flutter fitness app with offline-first architecture, custom workout workflows, and Firebase backend.
 
 ### Design System
 - **Theme**: Modern dark fitness theme
@@ -22,13 +22,14 @@ This is a modern Flutter fitness app with offline-first architecture, custom wor
 - Repository → Bloc/Cubit → UI (clean architecture)
 
 ### Backend & Database
-- **ALWAYS use Supabase** for all backend operations
-- Database: PostgreSQL via Supabase client
-- Auth: Supabase Auth (email, OAuth, magic links)
-- Storage: Supabase Storage for images/videos
-- Real-time: Supabase Realtime for live updates
-- NEVER write raw SQL queries - use Supabase client methods
-- ALWAYS handle offline scenarios gracefully
+- **ALWAYS use Firebase** for all backend operations
+- Database: Cloud Firestore with automatic offline persistence
+- Auth: Firebase Auth (email, Google, Apple, etc.)
+- Storage: Firebase Storage for images/videos
+- Real-time: Firestore real-time listeners for live updates
+- NEVER write raw queries - use Firestore SDK methods
+- Firestore handles offline caching automatically - no separate local DB needed
+- ALWAYS enable Firestore offline persistence in initialization
 
 ### Code Generation
 - **ALWAYS use Freezed** for data models and states
@@ -48,11 +49,19 @@ This is a modern Flutter fitness app with offline-first architecture, custom wor
 - Use named routes, NEVER use direct constructors in navigation
 - Support deep linking for all major features
 
-### Networking (for external APIs, not Supabase)
-- **ALWAYS use dio** for HTTP requests
+### Networking (for external APIs, not Firebase)
+- **ALWAYS use dio** for HTTP requests to third-party APIs
 - Use pretty_dio_logger in debug mode only
 - Handle errors with Either<Failure, T> pattern from dartz
 - Create API clients as services, inject via get_it
+- Firebase SDK handles its own network layer - don't use dio for Firebase operations
+
+### UI Enhancements
+- **ALWAYS use google_fonts** for custom typography
+- **ALWAYS use flutter_animate** for smooth animations
+- **ALWAYS use fl_chart** for progress graphs and analytics
+- Apply animations to enhance user experience, not distract
+- Use charts to visualize workout progress and stats
 
 ## Project Architecture
 
@@ -86,7 +95,7 @@ lib/
 ```
 
 ### Layer Responsibilities
-- **Data Layer**: Supabase communication, data models, caching
+- **Data Layer**: Firebase/Firestore communication, data models, offline caching
 - **Domain Layer**: Business entities, repository contracts, use cases
 - **Presentation Layer**: UI, Blocs/Cubits, user interactions
 
@@ -146,15 +155,30 @@ abstract class WorkoutRepository {
   Future<Either<Failure, Workout>> createWorkout(Workout workout);
 }
 
-// Data repository (implementation with Supabase)
+// Data repository (implementation with Firestore)
 class WorkoutRepositoryImpl implements WorkoutRepository {
-  final SupabaseClient supabase;
+  final FirebaseFirestore firestore;
+  final FirebaseAuth auth;
 
   @override
   Future<Either<Failure, List<Workout>>> getWorkouts() async {
     try {
-      final data = await supabase.from('workouts').select();
-      return Right(data.map((e) => WorkoutModel.fromJson(e).toEntity()).toList());
+      final userId = auth.currentUser?.uid;
+      if (userId == null) return Left(AuthFailure('Not authenticated'));
+
+      final snapshot = await firestore
+          .collection('workouts')
+          .where('userId', isEqualTo: userId)
+          .orderBy('date', descending: true)
+          .get();
+
+      final workouts = snapshot.docs
+          .map((doc) => WorkoutModel.fromJson(doc.data()).toEntity())
+          .toList();
+
+      return Right(workouts);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Unknown error'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -162,23 +186,32 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 }
 ```
 
-### Supabase Usage
+### Firestore Usage
 ```dart
-// GOOD - Use Supabase client
-final data = await supabase.from('workouts').select();
-await supabase.from('workouts').insert(workout.toJson());
+// GOOD - Use Firestore SDK
+final snapshot = await firestore.collection('workouts').get();
+await firestore.collection('workouts').add(workout.toJson());
 
-// GOOD - Handle offline
-try {
-  final data = await supabase.from('workouts').select();
-} on PostgrestException catch (e) {
-  // Handle Supabase error
-} on SocketException catch (e) {
-  // Handle offline scenario
-}
+// GOOD - Real-time listener
+firestore.collection('workouts').snapshots().listen((snapshot) {
+  // Handle updates
+});
 
-// BAD - Don't use raw SQL
-await supabase.rpc('SELECT * FROM workouts'); // ❌
+// GOOD - Query with filters
+await firestore
+    .collection('workouts')
+    .where('userId', isEqualTo: userId)
+    .where('date', isGreaterThan: startDate)
+    .orderBy('date', descending: true)
+    .limit(10)
+    .get();
+
+// GOOD - Offline persistence (works automatically)
+// Firestore caches data and serves from cache when offline
+// No special handling needed - it just works!
+
+// BAD - Don't access Firestore directly from UI
+firestore.collection('workouts').get(); // ❌ Use repository instead
 ```
 
 ## Theme & Design System
@@ -215,46 +248,48 @@ class AppColors {
 }
 ```
 
-### Typography
+### Typography (using Google Fonts)
 ```dart
+import 'package:google_fonts/google_fonts.dart';
+
 class AppTextStyles {
-  // Headers
-  static const h1 = TextStyle(
+  // Headers - Using Montserrat (bold, modern)
+  static TextStyle h1 = GoogleFonts.montserrat(
     fontSize: 32,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
     letterSpacing: -0.5,
   );
 
-  static const h2 = TextStyle(
+  static TextStyle h2 = GoogleFonts.montserrat(
     fontSize: 24,
     fontWeight: FontWeight.bold,
     color: AppColors.textPrimary,
     letterSpacing: -0.3,
   );
 
-  static const h3 = TextStyle(
+  static TextStyle h3 = GoogleFonts.montserrat(
     fontSize: 20,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
   );
 
-  // Body Text
-  static const bodyLarge = TextStyle(
+  // Body Text - Using Roboto (clean, readable)
+  static TextStyle bodyLarge = GoogleFonts.roboto(
     fontSize: 16,
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
     height: 1.5,
   );
 
-  static const bodyMedium = TextStyle(
+  static TextStyle bodyMedium = GoogleFonts.roboto(
     fontSize: 14,
     fontWeight: FontWeight.normal,
     color: AppColors.textSecondary,
     height: 1.5,
   );
 
-  static const bodySmall = TextStyle(
+  static TextStyle bodySmall = GoogleFonts.roboto(
     fontSize: 12,
     fontWeight: FontWeight.normal,
     color: AppColors.textTertiary,
@@ -262,14 +297,14 @@ class AppTextStyles {
   );
 
   // Special
-  static const button = TextStyle(
+  static TextStyle button = GoogleFonts.montserrat(
     fontSize: 16,
     fontWeight: FontWeight.w600,
     color: AppColors.textPrimary,
     letterSpacing: 0.5,
   );
 
-  static const stat = TextStyle(
+  static TextStyle stat = GoogleFonts.bebasNeue(
     fontSize: 36,
     fontWeight: FontWeight.bold,
     color: AppColors.primary,
@@ -449,12 +484,81 @@ Column(
 );
 ```
 
-### Animation Guidelines
+### Animation Guidelines (using flutter_animate)
+
+#### Basic Animations
+```dart
+import 'package:flutter_animate/flutter_animate.dart';
+
+// Fade In + Slide Up
+Text('Welcome')
+  .animate()
+  .fadeIn(duration: 300.ms)
+  .slideY(begin: 0.2, end: 0);
+
+// Scale on Tap (Button Press)
+ElevatedButton(
+  child: Text('START WORKOUT'),
+)
+  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+  .scale(duration: 200.ms, begin: Offset(1, 1), end: Offset(0.95, 0.95));
+
+// Shimmer Effect (Loading)
+Container()
+  .animate(onPlay: (controller) => controller.repeat())
+  .shimmer(duration: 1500.ms, color: AppColors.primary.withOpacity(0.3));
+
+// Pulse Effect (Active Workout Timer)
+Icon(Icons.circle, color: AppColors.primary)
+  .animate(onPlay: (controller) => controller.repeat())
+  .scale(duration: 1000.ms, begin: Offset(1, 1), end: Offset(1.2, 1.2))
+  .then()
+  .scale(duration: 1000.ms, begin: Offset(1.2, 1.2), end: Offset(1, 1));
+
+// Glow Effect
+Container(
+  decoration: BoxDecoration(
+    color: AppColors.surface,
+    borderRadius: BorderRadius.circular(16),
+  ),
+)
+  .animate(onPlay: (controller) => controller.repeat(reverse: true))
+  .boxShadow(
+    duration: 2000.ms,
+    begin: BoxShadow(color: AppColors.primary.withOpacity(0.2), blurRadius: 10),
+    end: BoxShadow(color: AppColors.primary.withOpacity(0.5), blurRadius: 30),
+  );
+
+// List Item Stagger
+ListView.builder(
+  itemCount: items.length,
+  itemBuilder: (context, index) {
+    return ListTile(title: Text(items[index]))
+      .animate()
+      .fadeIn(delay: (index * 50).ms)
+      .slideX(begin: -0.1, end: 0);
+  },
+);
+
+// Page Transition
+Navigator.push(
+  context,
+  MaterialPageRoute(builder: (context) => NextPage()),
+)
+  .animate()
+  .fadeIn(duration: 200.ms)
+  .slideX(begin: 1, end: 0);
+```
+
+#### Animation Best Practices
 - Use subtle animations (200-300ms duration)
 - Fade + Scale for button presses
 - Slide animations for page transitions
 - Pulse effect for active workout timer
 - Smooth color transitions for state changes
+- Stagger animations for lists (50-100ms delay per item)
+- Use shimmer for loading states
+- Add glow effects to highlight important elements
 
 ### Spacing System
 ```dart
@@ -479,6 +583,190 @@ class AppRadius {
   static const full = 9999.0; // Pill shape
 }
 ```
+
+### Charts & Analytics (using fl_chart)
+
+#### Line Chart - Workout Progress Over Time
+```dart
+import 'package:fl_chart/fl_chart.dart';
+
+LineChart(
+  LineChartData(
+    gridData: FlGridData(
+      show: true,
+      drawVerticalLine: false,
+      getDrawingHorizontalLine: (value) {
+        return FlLine(
+          color: AppColors.backgroundLight,
+          strokeWidth: 1,
+        );
+      },
+    ),
+    titlesData: FlTitlesData(
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              'Week ${value.toInt()}',
+              style: AppTextStyles.bodySmall,
+            );
+          },
+        ),
+      ),
+      leftTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          getTitlesWidget: (value, meta) {
+            return Text(
+              '${value.toInt()}kg',
+              style: AppTextStyles.bodySmall,
+            );
+          },
+        ),
+      ),
+      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    ),
+    borderData: FlBorderData(show: false),
+    lineBarsData: [
+      LineChartBarData(
+        spots: [
+          FlSpot(0, 60),
+          FlSpot(1, 65),
+          FlSpot(2, 70),
+          FlSpot(3, 75),
+          FlSpot(4, 80),
+        ],
+        isCurved: true,
+        color: AppColors.primary,
+        barWidth: 3,
+        dotData: FlDotData(
+          show: true,
+          getDotPainter: (spot, percent, barData, index) {
+            return FlDotCirclePainter(
+              radius: 6,
+              color: AppColors.primary,
+              strokeWidth: 2,
+              strokeColor: AppColors.background,
+            );
+          },
+        ),
+        belowBarData: BarAreaData(
+          show: true,
+          gradient: LinearGradient(
+            colors: [
+              AppColors.primary.withOpacity(0.3),
+              AppColors.primary.withOpacity(0.0),
+            ],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+      ),
+    ],
+  ),
+);
+```
+
+#### Bar Chart - Weekly Workout Volume
+```dart
+BarChart(
+  BarChartData(
+    alignment: BarChartAlignment.spaceAround,
+    maxY: 100,
+    barTouchData: BarTouchData(
+      touchTooltipData: BarTouchTooltipData(
+        tooltipBgColor: AppColors.surface,
+        tooltipRoundedRadius: 8,
+        getTooltipItem: (group, groupIndex, rod, rodIndex) {
+          return BarTooltipItem(
+            '${rod.toY.toInt()}kg',
+            AppTextStyles.bodyMedium.copyWith(color: AppColors.primary),
+          );
+        },
+      ),
+    ),
+    titlesData: FlTitlesData(
+      bottomTitles: AxisTitles(
+        sideTitles: SideTitles(
+          showTitles: true,
+          getTitlesWidget: (value, meta) {
+            const days = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+            return Text(
+              days[value.toInt()],
+              style: AppTextStyles.bodySmall,
+            );
+          },
+        ),
+      ),
+      leftTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      topTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+      rightTitles: AxisTitles(sideTitles: SideTitles(showTitles: false)),
+    ),
+    borderData: FlBorderData(show: false),
+    gridData: FlGridData(show: false),
+    barGroups: [
+      BarChartGroupData(x: 0, barRods: [BarChartRodData(toY: 80, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 1, barRods: [BarChartRodData(toY: 65, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 2, barRods: [BarChartRodData(toY: 90, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 3, barRods: [BarChartRodData(toY: 70, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 4, barRods: [BarChartRodData(toY: 85, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 5, barRods: [BarChartRodData(toY: 75, color: AppColors.primary, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+      BarChartGroupData(x: 6, barRods: [BarChartRodData(toY: 0, color: AppColors.backgroundLight, width: 20, borderRadius: BorderRadius.vertical(top: Radius.circular(4)))]),
+    ],
+  ),
+);
+```
+
+#### Pie Chart - Workout Distribution
+```dart
+PieChart(
+  PieChartData(
+    sectionsSpace: 2,
+    centerSpaceRadius: 60,
+    sections: [
+      PieChartSectionData(
+        value: 40,
+        title: '40%',
+        color: AppColors.primary,
+        radius: 50,
+        titleStyle: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+      ),
+      PieChartSectionData(
+        value: 30,
+        title: '30%',
+        color: AppColors.accent2,
+        radius: 50,
+        titleStyle: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+      ),
+      PieChartSectionData(
+        value: 20,
+        title: '20%',
+        color: AppColors.success,
+        radius: 50,
+        titleStyle: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+      ),
+      PieChartSectionData(
+        value: 10,
+        title: '10%',
+        color: AppColors.warning,
+        radius: 50,
+        titleStyle: AppTextStyles.bodyMedium.copyWith(fontWeight: FontWeight.bold),
+      ),
+    ],
+  ),
+);
+```
+
+#### Chart Best Practices
+- Use orange (`AppColors.primary`) as the main chart color
+- Add gradient fills below line charts for visual appeal
+- Use dark background colors for chart containers
+- Show tooltips on touch for detailed data
+- Animate charts on load using flutter_animate
+- Keep charts simple and focused on key metrics
+- Use consistent styling across all charts
 
 ## Naming Conventions
 
@@ -511,14 +799,16 @@ class AppRadius {
 ### Performance
 - Use `const` constructors wherever possible
 - Implement list builders for long lists
-- Cache Supabase queries when appropriate
-- Use Supabase real-time subscriptions for live data
+- Firestore automatically caches queries for offline access
+- Use Firestore real-time listeners (snapshots) for live data
+- Limit query results and use pagination for large datasets
 
 ### Testing
 - Write unit tests for use cases and repositories
 - Write widget tests for reusable widgets
 - Write bloc tests for all blocs/cubits
-- Mock Supabase client in tests
+- Mock FirebaseFirestore and FirebaseAuth in tests
+- Use fake_cloud_firestore package for Firestore mocking
 
 ### Code Quality
 - ALWAYS run `flutter analyze` before committing
@@ -527,60 +817,177 @@ class AppRadius {
 - Add comments for complex business logic
 - Keep methods small and focused (< 20 lines)
 
-## Supabase-Specific Rules
+## Firebase-Specific Rules
+
+### Initialization
+```dart
+// main.dart - Initialize Firebase
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+
+  // Enable offline persistence (IMPORTANT!)
+  FirebaseFirestore.instance.settings = const Settings(
+    persistenceEnabled: true,
+    cacheSizeBytes: Settings.CACHE_SIZE_UNLIMITED,
+  );
+
+  runApp(const MyApp());
+}
+```
 
 ### Authentication
 ```dart
+final auth = FirebaseAuth.instance;
+
 // Sign up
-await supabase.auth.signUp(email: email, password: password);
+await auth.createUserWithEmailAndPassword(
+  email: email,
+  password: password,
+);
 
 // Sign in
-await supabase.auth.signInWithPassword(email: email, password: password);
+await auth.signInWithEmailAndPassword(
+  email: email,
+  password: password,
+);
+
+// Sign out
+await auth.signOut();
 
 // Auth state
-supabase.auth.onAuthStateChange.listen((data) {
-  final session = data.session;
-  final user = data.session?.user;
+auth.authStateChanges().listen((User? user) {
+  if (user != null) {
+    // User is signed in
+    final uid = user.uid;
+    final email = user.email;
+  } else {
+    // User is signed out
+  }
 });
+
+// Google Sign-In
+final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
+final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+final credential = GoogleAuthProvider.credential(
+  accessToken: googleAuth.accessToken,
+  idToken: googleAuth.idToken,
+);
+await auth.signInWithCredential(credential);
 ```
 
-### Database Operations
+### Database Operations (Firestore)
 ```dart
-// Query
-final workouts = await supabase
-  .from('workouts')
-  .select('*, exercises(*)')
-  .eq('user_id', userId)
-  .order('date', ascending: false);
+final firestore = FirebaseFirestore.instance;
 
-// Insert
-await supabase.from('workouts').insert(workout.toJson());
+// Query - Get documents
+final snapshot = await firestore
+    .collection('workouts')
+    .where('userId', isEqualTo: userId)
+    .orderBy('date', descending: true)
+    .limit(20)
+    .get();
 
-// Update
-await supabase.from('workouts').update({'name': 'New Name'}).eq('id', id);
+final workouts = snapshot.docs
+    .map((doc) => WorkoutModel.fromJson({'id': doc.id, ...doc.data()}))
+    .toList();
+
+// Insert - Add document (auto-generated ID)
+await firestore.collection('workouts').add(workout.toJson());
+
+// Insert - Set document (custom ID)
+await firestore.collection('workouts').doc(workoutId).set(workout.toJson());
+
+// Update - Merge with existing data
+await firestore.collection('workouts').doc(id).update({
+  'name': 'New Name',
+  'updatedAt': FieldValue.serverTimestamp(),
+});
 
 // Delete
-await supabase.from('workouts').delete().eq('id', id);
+await firestore.collection('workouts').doc(id).delete();
 
-// Real-time
-supabase
-  .from('workouts')
-  .stream(primaryKey: ['id'])
-  .eq('user_id', userId)
-  .listen((data) { /* handle updates */ });
+// Real-time listener
+firestore
+    .collection('workouts')
+    .where('userId', isEqualTo: userId)
+    .orderBy('date', descending: true)
+    .snapshots()
+    .listen((snapshot) {
+      final workouts = snapshot.docs
+          .map((doc) => WorkoutModel.fromJson({'id': doc.id, ...doc.data()}))
+          .toList();
+      // Update UI with new data
+    });
+
+// Batch operations
+final batch = firestore.batch();
+batch.set(firestore.collection('workouts').doc(), workout1.toJson());
+batch.update(firestore.collection('workouts').doc(id), {'completed': true});
+batch.delete(firestore.collection('workouts').doc(oldId));
+await batch.commit();
+
+// Transactions
+await firestore.runTransaction((transaction) async {
+  final docRef = firestore.collection('users').doc(userId);
+  final snapshot = await transaction.get(docRef);
+  final newCount = (snapshot.data()?['workoutCount'] ?? 0) + 1;
+  transaction.update(docRef, {'workoutCount': newCount});
+});
 ```
 
 ### Storage
 ```dart
-// Upload image
-final path = await supabase.storage
-  .from('workout-images')
-  .upload('user/$userId/$filename', file);
+final storage = FirebaseStorage.instance;
 
-// Get public URL
-final url = supabase.storage
-  .from('workout-images')
-  .getPublicUrl('user/$userId/$filename');
+// Upload file
+final ref = storage.ref('workout-images/$userId/$filename');
+await ref.putFile(file);
+
+// Upload with metadata
+await ref.putFile(
+  file,
+  SettableMetadata(
+    contentType: 'image/jpeg',
+    customMetadata: {'userId': userId},
+  ),
+);
+
+// Get download URL
+final url = await ref.getDownloadURL();
+
+// Delete file
+await ref.delete();
+
+// List files
+final listResult = await storage.ref('workout-images/$userId').listAll();
+for (var item in listResult.items) {
+  print(item.fullPath);
+}
+```
+
+### Offline Persistence
+```dart
+// Firestore handles offline automatically after enabling in initialization!
+// When offline:
+// - Reads come from cache
+// - Writes are queued and sync when online
+// - Real-time listeners continue working with cached data
+
+// Check if data is from cache
+firestore.collection('workouts').snapshots().listen((snapshot) {
+  if (snapshot.metadata.isFromCache) {
+    // Data is from local cache (offline)
+  } else {
+    // Data is from server (online)
+  }
+});
+
+// Disable network (for testing offline mode)
+await FirebaseFirestore.instance.disableNetwork();
+
+// Enable network
+await FirebaseFirestore.instance.enableNetwork();
 ```
 
 ## Development Workflow
