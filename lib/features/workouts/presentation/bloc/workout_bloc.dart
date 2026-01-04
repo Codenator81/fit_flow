@@ -6,9 +6,10 @@ import 'workout_state.dart';
 class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
   final WorkoutRepository repository;
 
-  WorkoutBloc(this.repository) : super(const WorkoutInitial()) {
+  WorkoutBloc(this.repository) : super(const WorkoutState.initial()) {
     on<LoadWorkouts>(_onLoadWorkouts);
     on<CreateWorkout>(_onCreateWorkout);
+    on<DeleteWorkout>(_onDeleteWorkout);
     on<LoadWorkoutDetail>(_onLoadWorkoutDetail);
     on<AddDay>(_onAddDay);
     on<AddExercise>(_onAddExercise);
@@ -19,13 +20,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     LoadWorkouts event,
     Emitter<WorkoutState> emit,
   ) async {
-    emit(const WorkoutLoading());
+    emit(const WorkoutState.loading());
 
     final result = await repository.getWorkouts();
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
-      (workouts) => emit(WorkoutLoaded(workouts)),
+      (failure) => emit(WorkoutState.error(failure.message)),
+      (workouts) => emit(WorkoutState.loaded(workouts)),
     );
   }
 
@@ -33,15 +34,32 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     CreateWorkout event,
     Emitter<WorkoutState> emit,
   ) async {
-    emit(const WorkoutLoading());
+    emit(const WorkoutState.loading());
 
     final result = await repository.createWorkout(event.name);
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
+      (failure) => emit(WorkoutState.error(failure.message)),
       (_) async {
         // Reload workouts after creation
-        add(const LoadWorkouts());
+        add(const WorkoutEvent.loadWorkouts());
+      },
+    );
+  }
+
+  Future<void> _onDeleteWorkout(
+    DeleteWorkout event,
+    Emitter<WorkoutState> emit,
+  ) async {
+    emit(const WorkoutState.loading());
+
+    final result = await repository.deleteWorkout(event.workoutId);
+
+    result.fold(
+      (failure) => emit(WorkoutState.error(failure.message)),
+      (_) async {
+        // Reload workouts after deletion
+        add(const WorkoutEvent.loadWorkouts());
       },
     );
   }
@@ -50,13 +68,13 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     LoadWorkoutDetail event,
     Emitter<WorkoutState> emit,
   ) async {
-    emit(const WorkoutLoading());
+    emit(const WorkoutState.loading());
 
     final result = await repository.getWorkout(event.workoutId);
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
-      (workout) => emit(WorkoutDetail(workout)),
+      (failure) => emit(WorkoutState.error(failure.message)),
+      (workout) => emit(WorkoutState.detail(workout)),
     );
   }
 
@@ -64,10 +82,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     final result = await repository.addDay(event.workoutId, event.dayName);
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
+      (failure) => emit(WorkoutState.error(failure.message)),
       (_) {
         // Reload workout detail
-        add(LoadWorkoutDetail(event.workoutId));
+        add(WorkoutEvent.loadWorkoutDetail(event.workoutId));
       },
     );
   }
@@ -85,10 +103,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
+      (failure) => emit(WorkoutState.error(failure.message)),
       (_) {
         // Reload workout detail
-        add(LoadWorkoutDetail(event.workoutId));
+        add(WorkoutEvent.loadWorkoutDetail(event.workoutId));
       },
     );
   }
@@ -106,10 +124,10 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
     );
 
     result.fold(
-      (failure) => emit(WorkoutError(failure.message)),
+      (failure) => emit(WorkoutState.error(failure.message)),
       (_) {
         // Reload workout detail
-        add(LoadWorkoutDetail(event.workoutId));
+        add(WorkoutEvent.loadWorkoutDetail(event.workoutId));
       },
     );
   }

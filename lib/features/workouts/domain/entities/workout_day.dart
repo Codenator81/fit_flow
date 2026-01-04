@@ -1,33 +1,14 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'exercise.dart';
 
-class WorkoutDay extends Equatable {
-  final String id;
-  final String name;
-  final int dayNumber;
-  final List<Exercise> exercises;
+part 'workout_day.freezed.dart';
 
-  const WorkoutDay({
-    required this.id,
-    required this.name,
-    required this.dayNumber,
-    required this.exercises,
-  });
-
-  WorkoutDay copyWith({
-    String? id,
-    String? name,
-    int? dayNumber,
-    List<Exercise>? exercises,
-  }) {
-    return WorkoutDay(
-      id: id ?? this.id,
-      name: name ?? this.name,
-      dayNumber: dayNumber ?? this.dayNumber,
-      exercises: exercises ?? this.exercises,
-    );
-  }
-
-  @override
-  List<Object?> get props => [id, name, dayNumber, exercises];
+@freezed
+sealed class WorkoutDay with _$WorkoutDay {
+  const factory WorkoutDay({
+    required String id,
+    required String name,
+    required int dayNumber,
+    required List<Exercise> exercises,
+  }) = _WorkoutDay;
 }

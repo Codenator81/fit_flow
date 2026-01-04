@@ -255,7 +255,10 @@ class WorkoutDetailPage extends StatelessWidget {
             onFieldSubmitted: (_) {
               if (formKey.currentState!.validate()) {
                 context.read<WorkoutBloc>().add(
-                  AddDay(workoutId, controller.text.trim()),
+                  WorkoutEvent.addDay(
+                    workoutId: workoutId,
+                    dayName: controller.text.trim(),
+                  ),
                 );
                 Navigator.pop(dialogContext);
               }
@@ -276,7 +279,10 @@ class WorkoutDetailPage extends StatelessWidget {
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 context.read<WorkoutBloc>().add(
-                  AddDay(workoutId, controller.text.trim()),
+                  WorkoutEvent.addDay(
+                    workoutId: workoutId,
+                    dayName: controller.text.trim(),
+                  ),
                 );
                 Navigator.pop(dialogContext);
               }

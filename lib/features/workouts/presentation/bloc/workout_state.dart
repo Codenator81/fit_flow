@@ -1,44 +1,17 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../domain/entities/workout.dart';
 
-abstract class WorkoutState extends Equatable {
-  const WorkoutState();
+part 'workout_state.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
-}
+@freezed
+sealed class WorkoutState with _$WorkoutState {
+  const factory WorkoutState.initial() = WorkoutInitial;
 
-class WorkoutInitial extends WorkoutState {
-  const WorkoutInitial();
-}
+  const factory WorkoutState.loading() = WorkoutLoading;
 
-class WorkoutLoading extends WorkoutState {
-  const WorkoutLoading();
-}
+  const factory WorkoutState.loaded(List<Workout> workouts) = WorkoutLoaded;
 
-class WorkoutLoaded extends WorkoutState {
-  final List<Workout> workouts;
+  const factory WorkoutState.detail(Workout workout) = WorkoutDetail;
 
-  const WorkoutLoaded(this.workouts);
-
-  @override
-  List<Object?> get props => [workouts];
-}
-
-class WorkoutDetail extends WorkoutState {
-  final Workout workout;
-
-  const WorkoutDetail(this.workout);
-
-  @override
-  List<Object?> get props => [workout];
-}
-
-class WorkoutError extends WorkoutState {
-  final String message;
-
-  const WorkoutError(this.message);
-
-  @override
-  List<Object?> get props => [message];
+  const factory WorkoutState.error(String message) = WorkoutError;
 }

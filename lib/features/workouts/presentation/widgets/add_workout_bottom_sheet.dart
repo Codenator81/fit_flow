@@ -25,7 +25,7 @@ class _AddWorkoutBottomSheetState extends State<AddWorkoutBottomSheet> {
   void _createWorkout() {
     if (_formKey.currentState!.validate()) {
       context.read<WorkoutBloc>().add(
-        CreateWorkout(_controller.text.trim()),
+        WorkoutEvent.createWorkout(_controller.text.trim()),
       );
       Navigator.pop(context);
     }

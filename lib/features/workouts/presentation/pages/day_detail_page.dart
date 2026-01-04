@@ -317,12 +317,12 @@ class DayDetailPage extends StatelessWidget {
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 context.read<WorkoutBloc>().add(
-                  AddExercise(
-                    workout.id,
-                    day.id,
-                    nameController.text.trim(),
-                    int.parse(setsController.text),
-                    int.parse(repsController.text),
+                  WorkoutEvent.addExercise(
+                    workoutId: workout.id,
+                    dayId: day.id,
+                    exerciseName: nameController.text.trim(),
+                    sets: int.parse(setsController.text),
+                    reps: int.parse(repsController.text),
                   ),
                 );
                 Navigator.pop(dialogContext);
@@ -456,12 +456,12 @@ class DayDetailPage extends StatelessWidget {
             onPressed: () {
               if (formKey.currentState!.validate()) {
                 context.read<WorkoutBloc>().add(
-                  UpdateExerciseProgress(
-                    workout.id,
-                    day.id,
-                    exercise.id,
-                    int.parse(setsController.text),
-                    int.parse(repsController.text),
+                  WorkoutEvent.updateExerciseProgress(
+                    workoutId: workout.id,
+                    dayId: day.id,
+                    exerciseId: exercise.id,
+                    completedSets: int.parse(setsController.text),
+                    completedReps: int.parse(repsController.text),
                   ),
                 );
                 Navigator.pop(dialogContext);

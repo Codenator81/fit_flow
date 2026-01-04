@@ -1,84 +1,35 @@
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-abstract class WorkoutEvent extends Equatable {
-  const WorkoutEvent();
+part 'workout_event.freezed.dart';
 
-  @override
-  List<Object?> get props => [];
-}
+@freezed
+sealed class WorkoutEvent with _$WorkoutEvent {
+  const factory WorkoutEvent.loadWorkouts() = LoadWorkouts;
 
-class LoadWorkouts extends WorkoutEvent {
-  const LoadWorkouts();
-}
+  const factory WorkoutEvent.createWorkout(String name) = CreateWorkout;
 
-class CreateWorkout extends WorkoutEvent {
-  final String name;
+  const factory WorkoutEvent.deleteWorkout(String workoutId) = DeleteWorkout;
 
-  const CreateWorkout(this.name);
+  const factory WorkoutEvent.loadWorkoutDetail(String workoutId) = LoadWorkoutDetail;
 
-  @override
-  List<Object?> get props => [name];
-}
+  const factory WorkoutEvent.addDay({
+    required String workoutId,
+    required String dayName,
+  }) = AddDay;
 
-class LoadWorkoutDetail extends WorkoutEvent {
-  final String workoutId;
+  const factory WorkoutEvent.addExercise({
+    required String workoutId,
+    required String dayId,
+    required String exerciseName,
+    required int sets,
+    required int reps,
+  }) = AddExercise;
 
-  const LoadWorkoutDetail(this.workoutId);
-
-  @override
-  List<Object?> get props => [workoutId];
-}
-
-class AddDay extends WorkoutEvent {
-  final String workoutId;
-  final String dayName;
-
-  const AddDay(this.workoutId, this.dayName);
-
-  @override
-  List<Object?> get props => [workoutId, dayName];
-}
-
-class AddExercise extends WorkoutEvent {
-  final String workoutId;
-  final String dayId;
-  final String exerciseName;
-  final int sets;
-  final int reps;
-
-  const AddExercise(
-    this.workoutId,
-    this.dayId,
-    this.exerciseName,
-    this.sets,
-    this.reps,
-  );
-
-  @override
-  List<Object?> get props => [workoutId, dayId, exerciseName, sets, reps];
-}
-
-class UpdateExerciseProgress extends WorkoutEvent {
-  final String workoutId;
-  final String dayId;
-  final String exerciseId;
-  final int completedSets;
-  final int completedReps;
-
-  const UpdateExerciseProgress(
-    this.workoutId,
-    this.dayId,
-    this.exerciseId,
-    this.completedSets,
-    this.completedReps,
-  );
-
-  @override
-  List<Object?> get props => [
-        workoutId,
-        dayId,
-        exerciseId,
-        completedSets,
-        completedReps,
-      ];
+  const factory WorkoutEvent.updateExerciseProgress({
+    required String workoutId,
+    required String dayId,
+    required String exerciseId,
+    required int completedSets,
+    required int completedReps,
+  }) = UpdateExerciseProgress;
 }
