@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:vibration/vibration.dart';
-import 'package:audioplayers/audioplayers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/workout.dart';
@@ -30,6 +29,10 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   // Map<exerciseId, List<reps for each set>>
   final Map<String, List<int>> _setReps = {};
 
+  // Track completion status for each set
+  // Map<exerciseId, List<bool for each set>>
+  final Map<String, List<bool>> _setCompleted = {};
+
   // Track manual completion status for each exercise
   final Map<String, bool> _exerciseCompleted = {};
 
@@ -42,7 +45,21 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         exercise.sets,
         (_) => exercise.reps,
       );
+      _setCompleted[exercise.id] = List.generate(
+        exercise.sets,
+        (_) => false,
+      );
       _exerciseCompleted[exercise.id] = false;
+    }
+  }
+
+  void _checkExerciseCompletion(String exerciseId) {
+    // Auto-complete exercise if all sets are complete
+    final allSetsComplete = _setCompleted[exerciseId]?.every((completed) => completed) ?? false;
+    if (allSetsComplete && (_setCompleted[exerciseId]?.isNotEmpty ?? false)) {
+      setState(() {
+        _exerciseCompleted[exerciseId] = true;
+      });
     }
   }
 
@@ -167,7 +184,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 ],
               ),
               child: ElevatedButton.icon(
-                onPressed: (completedExercises > 0 || widget.day.isRestDay)
+                onPressed: (completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay
                     ? () => _finishDay(context)
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -184,12 +201,12 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 ),
                 icon: Icon(
                   Icons.check_circle,
-                  color: (completedExercises > 0 || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
+                  color: ((completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
                 ),
                 label: Text(
                   'Finish Day',
                   style: AppTextStyles.button.copyWith(
-                    color: (completedExercises > 0 || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
+                    color: ((completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
                   ),
                 ),
               ),
@@ -273,6 +290,13 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                     onChanged: (value) {
                       setState(() {
                         _exerciseCompleted[exercise.id] = value;
+                        // When toggling exercise completion, toggle all sets
+                        if (_setCompleted[exercise.id] != null) {
+                          _setCompleted[exercise.id] = List.generate(
+                            _setCompleted[exercise.id]!.length,
+                            (_) => value,
+                          );
+                        }
                       });
                     },
                     activeThumbColor: AppColors.success,
@@ -300,6 +324,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 onPressed: () {
                   setState(() {
                     _setReps[exercise.id]!.add(exercise.reps);
+                    _setCompleted[exercise.id]!.add(false);
                   });
                 },
                 style: OutlinedButton.styleFrom(
@@ -343,29 +368,57 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   Widget _buildSetRow(Exercise exercise, int setIndex) {
     final sets = _setReps[exercise.id]!;
     final reps = sets[setIndex];
+    final isSetCompleted = _setCompleted[exercise.id]![setIndex];
 
     return Container(
       margin: const EdgeInsets.only(bottom: 8),
       padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
-        color: AppColors.background.withValues(alpha: 0.5),
+        color: isSetCompleted
+            ? AppColors.success.withValues(alpha: 0.15)
+            : AppColors.background.withValues(alpha: 0.5),
         borderRadius: BorderRadius.circular(12),
         border: Border.all(
-          color: AppColors.primary.withValues(alpha: 0.2),
-          width: 1,
+          color: isSetCompleted
+              ? AppColors.success
+              : AppColors.primary.withValues(alpha: 0.2),
+          width: isSetCompleted ? 2 : 1,
         ),
       ),
       child: Row(
         children: [
+          // Completion Checkbox
+          Transform.scale(
+            scale: 1.1,
+            child: Checkbox(
+              value: isSetCompleted,
+              onChanged: (value) {
+                setState(() {
+                  _setCompleted[exercise.id]![setIndex] = value ?? false;
+                  _checkExerciseCompletion(exercise.id);
+                });
+              },
+              activeColor: AppColors.success,
+              checkColor: Colors.white,
+              side: BorderSide(
+                color: AppColors.primary.withValues(alpha: 0.5),
+                width: 2,
+              ),
+            ),
+          ),
+          const SizedBox(width: 8),
+
           // Set Number
           Container(
-            width: 40,
-            height: 40,
+            width: 36,
+            height: 36,
             decoration: BoxDecoration(
-              color: AppColors.primary.withValues(alpha: 0.2),
+              color: isSetCompleted
+                  ? AppColors.success.withValues(alpha: 0.2)
+                  : AppColors.primary.withValues(alpha: 0.2),
               borderRadius: BorderRadius.circular(8),
               border: Border.all(
-                color: AppColors.primary,
+                color: isSetCompleted ? AppColors.success : AppColors.primary,
                 width: 1,
               ),
             ),
@@ -373,78 +426,87 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
               child: Text(
                 '${setIndex + 1}',
                 style: AppTextStyles.h3.copyWith(
-                  color: AppColors.primary,
-                  fontSize: 16,
+                  color: isSetCompleted ? AppColors.success : AppColors.primary,
+                  fontSize: 14,
                 ),
               ),
             ),
           ),
-          const SizedBox(width: 12),
+          const Spacer(),
 
-          // Reps Label
-          Expanded(
-            child: Text(
-              'Reps',
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-
-          // Reps Controls
-          Row(
+          // Reps Controls with Label Below
+          Column(
+            mainAxisSize: MainAxisSize.min,
             children: [
-              IconButton(
-                onPressed: reps > 0
-                    ? () {
-                        setState(() {
-                          _setReps[exercise.id]![setIndex] = reps - 1;
-                        });
-                      }
-                    : null,
-                icon: const Icon(Icons.remove_circle_outline),
-                color: AppColors.primary,
-                iconSize: 28,
-              ),
-              Container(
-                width: 50,
-                height: 40,
-                decoration: BoxDecoration(
-                  color: AppColors.primary.withValues(alpha: 0.2),
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(
+              // Reps Controls
+              Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  IconButton(
+                    onPressed: reps > 0
+                        ? () {
+                            setState(() {
+                              _setReps[exercise.id]![setIndex] = reps - 1;
+                            });
+                          }
+                        : null,
+                    icon: const Icon(Icons.remove_circle_outline),
                     color: AppColors.primary,
-                    width: 2,
+                    iconSize: 28,
                   ),
-                ),
-                child: Center(
-                  child: Text(
-                    '$reps',
-                    style: AppTextStyles.stat.copyWith(
-                      color: AppColors.primary,
-                      fontSize: 20,
+                  Container(
+                    width: 50,
+                    height: 40,
+                    decoration: BoxDecoration(
+                      color: AppColors.primary.withValues(alpha: 0.2),
+                      borderRadius: BorderRadius.circular(8),
+                      border: Border.all(
+                        color: AppColors.primary,
+                        width: 2,
+                      ),
+                    ),
+                    child: Center(
+                      child: Text(
+                        '$reps',
+                        style: AppTextStyles.stat.copyWith(
+                          color: AppColors.primary,
+                          fontSize: 20,
+                        ),
+                      ),
                     ),
                   ),
-                ),
+                  IconButton(
+                    onPressed: () {
+                      setState(() {
+                        _setReps[exercise.id]![setIndex] = reps + 1;
+                      });
+                    },
+                    icon: const Icon(Icons.add_circle),
+                    color: AppColors.primary,
+                    iconSize: 28,
+                  ),
+                ],
               ),
-              IconButton(
-                onPressed: () {
-                  setState(() {
-                    _setReps[exercise.id]![setIndex] = reps + 1;
-                  });
-                },
-                icon: const Icon(Icons.add_circle),
-                color: AppColors.primary,
-                iconSize: 28,
+              // Reps Label Below Controls
+              const SizedBox(height: 4),
+              Text(
+                'Reps',
+                style: AppTextStyles.bodySmall.copyWith(
+                  color: isSetCompleted
+                      ? AppColors.success
+                      : AppColors.textTertiary,
+                ),
               ),
             ],
           ),
+          const SizedBox(width: 8),
 
           // Delete Set Button
           IconButton(
             onPressed: () {
               setState(() {
                 _setReps[exercise.id]!.removeAt(setIndex);
+                _setCompleted[exercise.id]!.removeAt(setIndex);
               });
             },
             icon: const Icon(Icons.delete_outline),
@@ -767,7 +829,6 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
   late int _remainingSeconds;
   late Timer _timer;
   bool _hasPlayedWarning = false;
-  final AudioPlayer _audioPlayer = AudioPlayer();
 
   @override
   void initState() {
@@ -814,13 +875,6 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
     } catch (e) {
       // Vibration not supported on this device
     }
-
-    // Play beep sound (using system beep)
-    try {
-      await _audioPlayer.play(AssetSource('sounds/beep.mp3'));
-    } catch (e) {
-      // If sound file not available, just continue
-    }
   }
 
   Future<void> _playFinishSound() async {
@@ -833,19 +887,11 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
     } catch (e) {
       // Vibration not supported on this device
     }
-
-    // Play finish sound
-    try {
-      await _audioPlayer.play(AssetSource('sounds/finish.mp3'));
-    } catch (e) {
-      // If sound file not available, just continue
-    }
   }
 
   @override
   void dispose() {
     _timer.cancel();
-    _audioPlayer.dispose();
     super.dispose();
   }
 

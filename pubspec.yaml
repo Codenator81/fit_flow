@@ -26,7 +26,6 @@ dependencies:
   json_annotation: ^4.9.0
   pretty_dio_logger: ^1.4.0
   vibration: ^2.0.0
-  audioplayers: ^6.1.0
 
 dev_dependencies:
   flutter_test:
