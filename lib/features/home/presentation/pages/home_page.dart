@@ -23,20 +23,25 @@ class HomePage extends StatelessWidget {
           auth: FirebaseAuth.instance,
         ),
       )..add(const WorkoutEvent.loadWorkouts()),
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('FitFlow'),
-          actions: [
-            IconButton(
-              icon: const Icon(Icons.more_vert),
-              onPressed: () {
-                Navigator.pushNamed(context, '/settings');
-              },
-            ),
-          ],
-        ),
-        body: BlocBuilder<WorkoutBloc, WorkoutState>(
-          builder: (context, state) {
+      child: Builder(
+        builder: (context) => Scaffold(
+          appBar: AppBar(
+            title: const Text('FitFlow'),
+            actions: [
+              IconButton(
+                icon: const Icon(Icons.more_vert),
+                onPressed: () async {
+                  await Navigator.pushNamed(context, '/settings');
+                  // Reload workouts when returning from settings
+                  if (context.mounted) {
+                    context.read<WorkoutBloc>().add(const WorkoutEvent.loadWorkouts());
+                  }
+                },
+              ),
+            ],
+          ),
+          body: BlocBuilder<WorkoutBloc, WorkoutState>(
+            builder: (context, state) {
             return SingleChildScrollView(
               padding: const EdgeInsets.all(24),
               child: SizedBox(
@@ -74,6 +79,7 @@ class HomePage extends StatelessWidget {
           },
         ),
       ),
+        ),
     );
   }
 
@@ -272,9 +278,9 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _navigateToCurrentWorkout(BuildContext context, WorkoutLoaded state) {
+  void _navigateToCurrentWorkout(BuildContext context, WorkoutLoaded state) async {
     if (state.workouts.isNotEmpty) {
-      Navigator.push(
+      await Navigator.push(
         context,
         MaterialPageRoute(
           builder: (navContext) => BlocProvider.value(
@@ -283,6 +289,10 @@ class HomePage extends StatelessWidget {
           ),
         ),
       );
+      // Reload workouts when returning from workout detail
+      if (context.mounted) {
+        context.read<WorkoutBloc>().add(const WorkoutEvent.loadWorkouts());
+      }
     }
   }
 

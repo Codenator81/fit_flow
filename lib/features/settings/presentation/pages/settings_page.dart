@@ -8,6 +8,8 @@ import '../../../workouts/presentation/bloc/workout_bloc.dart';
 import '../../../workouts/presentation/bloc/workout_event.dart';
 import '../../../workouts/presentation/bloc/workout_state.dart';
 import '../../../workouts/data/repositories/workout_repository_impl.dart';
+import '../../../workouts/presentation/widgets/add_workout_bottom_sheet.dart';
+import '../../../workouts/presentation/pages/edit_workout_page.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
@@ -134,7 +136,20 @@ class SettingsPage extends StatelessWidget {
                         color: Colors.transparent,
                         child: InkWell(
                           onTap: () {
-                            // TODO: Navigate to edit workout page
+                            final workout = state.workouts.first;
+                            // Load workout detail and navigate
+                            context.read<WorkoutBloc>().add(
+                                  WorkoutEvent.loadWorkoutDetail(workout.id),
+                                );
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (navContext) => BlocProvider.value(
+                                  value: context.read<WorkoutBloc>(),
+                                  child: EditWorkoutPage(workout: workout),
+                                ),
+                              ),
+                            );
                           },
                           borderRadius: BorderRadius.circular(12),
                           child: Padding(
@@ -280,7 +295,15 @@ class SettingsPage extends StatelessWidget {
               ),
               child: ElevatedButton.icon(
                 onPressed: () {
-                  // TODO: Show add workout dialog
+                  showModalBottomSheet(
+                    context: context,
+                    isScrollControlled: true,
+                    backgroundColor: Colors.transparent,
+                    builder: (bottomSheetContext) => BlocProvider.value(
+                      value: context.read<WorkoutBloc>(),
+                      child: const AddWorkoutBottomSheet(),
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.transparent,

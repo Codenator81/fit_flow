@@ -10,12 +10,20 @@ class WorkoutDayModel {
   final String name;
   final int dayNumber;
   final List<ExerciseModel> exercises;
+  final bool isRestDay;
+  final bool isCompleted;
+  final bool isActive;
+  final DateTime? completedDate;
 
   const WorkoutDayModel({
     required this.id,
     required this.name,
     required this.dayNumber,
     required this.exercises,
+    this.isRestDay = false,
+    this.isCompleted = false,
+    this.isActive = false,
+    this.completedDate,
   });
 
   factory WorkoutDayModel.fromJson(Map<String, dynamic> json) =>
@@ -29,6 +37,10 @@ class WorkoutDayModel {
       name: name,
       dayNumber: dayNumber,
       exercises: exercises.map((e) => e.toEntity()).toList(),
+      isRestDay: isRestDay,
+      isCompleted: isCompleted,
+      isActive: isActive,
+      completedDate: completedDate,
     );
   }
 
@@ -38,6 +50,10 @@ class WorkoutDayModel {
       name: day.name,
       dayNumber: day.dayNumber,
       exercises: day.exercises.map((e) => ExerciseModel.fromEntity(e)).toList(),
+      isRestDay: day.isRestDay,
+      isCompleted: day.isCompleted,
+      isActive: day.isActive,
+      completedDate: day.completedDate,
     );
   }
 }

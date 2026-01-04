@@ -14,6 +14,12 @@ WorkoutDayModel _$WorkoutDayModelFromJson(Map<String, dynamic> json) =>
       exercises: (json['exercises'] as List<dynamic>)
           .map((e) => ExerciseModel.fromJson(e as Map<String, dynamic>))
           .toList(),
+      isRestDay: json['isRestDay'] as bool? ?? false,
+      isCompleted: json['isCompleted'] as bool? ?? false,
+      isActive: json['isActive'] as bool? ?? false,
+      completedDate: json['completedDate'] == null
+          ? null
+          : DateTime.parse(json['completedDate'] as String),
     );
 
 Map<String, dynamic> _$WorkoutDayModelToJson(WorkoutDayModel instance) =>
@@ -22,4 +28,8 @@ Map<String, dynamic> _$WorkoutDayModelToJson(WorkoutDayModel instance) =>
       'name': instance.name,
       'dayNumber': instance.dayNumber,
       'exercises': instance.exercises,
+      'isRestDay': instance.isRestDay,
+      'isCompleted': instance.isCompleted,
+      'isActive': instance.isActive,
+      'completedDate': instance.completedDate?.toIso8601String(),
     };

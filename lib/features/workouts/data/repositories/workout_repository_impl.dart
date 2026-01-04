@@ -103,7 +103,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> addDay(String workoutId, String dayName) async {
+  Future<Either<Failure, Unit>> addDay(String workoutId, String dayName, {bool isRestDay = false}) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
       if (!doc.exists) {
@@ -119,6 +119,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         'name': dayName,
         'dayNumber': dayNumber,
         'exercises': [],
+        'isRestDay': isRestDay,
+        'isCompleted': false,
+        'isActive': false,
       };
 
       await firestore.collection('workouts').doc(workoutId).update({
@@ -135,12 +138,45 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
+  Future<Either<Failure, Unit>> deleteDay(String workoutId, String dayId) async {
+    try {
+      final doc = await firestore.collection('workouts').doc(workoutId).get();
+      if (!doc.exists) {
+        return const Left(ServerFailure('Workout not found'));
+      }
+
+      final data = doc.data()!;
+      final days = List<Map<String, dynamic>>.from(data['days'] ?? []);
+
+      // Remove the day with matching ID
+      days.removeWhere((d) => d['id'] == dayId);
+
+      // Update day numbers for remaining days
+      for (var i = 0; i < days.length; i++) {
+        days[i]['dayNumber'] = i + 1;
+      }
+
+      await firestore.collection('workouts').doc(workoutId).update({
+        'days': days,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Failed to delete day'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
   Future<Either<Failure, Unit>> addExercise(
     String workoutId,
     String dayId,
     String exerciseName,
     int sets,
     int reps,
+    int restSeconds,
   ) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
@@ -159,10 +195,10 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       final newExercise = {
         'id': DateTime.now().millisecondsSinceEpoch.toString(),
         'name': exerciseName,
-        'expectedSets': sets,
-        'expectedReps': reps,
-        'completedSets': 0,
-        'completedReps': 0,
+        'sets': sets,
+        'reps': reps,
+        'restSeconds': restSeconds,
+        'history': [],
       };
 
       final exercises = List<Map<String, dynamic>>.from(
@@ -185,12 +221,10 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> updateExerciseProgress(
+  Future<Either<Failure, Unit>> completeDay(
     String workoutId,
     String dayId,
-    String exerciseId,
-    int completedSets,
-    int completedReps,
+    Map<String, Map<String, int>> exerciseProgress,
   ) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
@@ -206,18 +240,47 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         return const Left(ServerFailure('Day not found'));
       }
 
+      // Update exercise history
       final exercises = List<Map<String, dynamic>>.from(
         days[dayIndex]['exercises'] ?? [],
       );
-      final exerciseIndex = exercises.indexWhere((e) => e['id'] == exerciseId);
 
-      if (exerciseIndex == -1) {
-        return const Left(ServerFailure('Exercise not found'));
+      for (var exercise in exercises) {
+        final exerciseId = exercise['id'] as String;
+        if (exerciseProgress.containsKey(exerciseId)) {
+          final progress = exerciseProgress[exerciseId]!;
+          final history = List<Map<String, dynamic>>.from(exercise['history'] ?? []);
+
+          // Add new completion to history
+          history.insert(0, {
+            'date': DateTime.now().toIso8601String(),
+            'maxSets': progress['sets'] ?? 0,
+            'maxReps': progress['reps'] ?? 0,
+          });
+
+          // Keep only last 5 entries
+          if (history.length > 5) {
+            history.removeRange(5, history.length);
+          }
+
+          exercise['history'] = history;
+        }
       }
 
-      exercises[exerciseIndex]['completedSets'] = completedSets;
-      exercises[exerciseIndex]['completedReps'] = completedReps;
       days[dayIndex]['exercises'] = exercises;
+
+      // Mark day as completed
+      days[dayIndex]['isCompleted'] = true;
+      days[dayIndex]['isActive'] = false;
+      days[dayIndex]['completedDate'] = DateTime.now().toIso8601String();
+
+      // Mark next uncompleted day as active
+      for (var i = 0; i < days.length; i++) {
+        if (!(days[i]['isCompleted'] ?? false)) {
+          days[i]['isActive'] = true;
+          break;
+        }
+      }
 
       await firestore.collection('workouts').doc(workoutId).update({
         'days': days,
@@ -226,9 +289,123 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
       return const Right(unit);
     } on FirebaseException catch (e) {
-      return Left(ServerFailure(e.message ?? 'Failed to update progress'));
+      return Left(ServerFailure(e.message ?? 'Failed to complete day'));
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, Unit>> markRestDayComplete(
+    String workoutId,
+    String dayId,
+  ) async {
+    try {
+      final doc = await firestore.collection('workouts').doc(workoutId).get();
+      if (!doc.exists) {
+        return const Left(ServerFailure('Workout not found'));
+      }
+
+      final data = doc.data()!;
+      final days = List<Map<String, dynamic>>.from(data['days'] ?? []);
+      final dayIndex = days.indexWhere((d) => d['id'] == dayId);
+
+      if (dayIndex == -1) {
+        return const Left(ServerFailure('Day not found'));
+      }
+
+      // Mark rest day as completed
+      days[dayIndex]['isCompleted'] = true;
+      days[dayIndex]['isActive'] = false;
+      days[dayIndex]['completedDate'] = DateTime.now().toIso8601String();
+
+      // Mark next uncompleted day as active
+      for (var i = 0; i < days.length; i++) {
+        if (!(days[i]['isCompleted'] ?? false)) {
+          days[i]['isActive'] = true;
+          break;
+        }
+      }
+
+      await firestore.collection('workouts').doc(workoutId).update({
+        'days': days,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Failed to mark rest day complete'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> resetWorkout(String workoutId) async {
+    try {
+      final doc = await firestore.collection('workouts').doc(workoutId).get();
+      if (!doc.exists) {
+        return const Left(ServerFailure('Workout not found'));
+      }
+
+      final data = doc.data()!;
+      final days = List<Map<String, dynamic>>.from(data['days'] ?? []);
+
+      // Reset all days
+      for (var i = 0; i < days.length; i++) {
+        days[i]['isCompleted'] = false;
+        days[i]['isActive'] = i == 0; // First day becomes active
+        days[i]['completedDate'] = null;
+      }
+
+      await firestore.collection('workouts').doc(workoutId).update({
+        'days': days,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Failed to reset workout'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, Unit>> setActiveDay(
+    String workoutId,
+    String dayId,
+  ) async {
+    try {
+      final doc = await firestore.collection('workouts').doc(workoutId).get();
+      if (!doc.exists) {
+        return const Left(ServerFailure('Workout not found'));
+      }
+
+      final data = doc.data()!;
+      final days = List<Map<String, dynamic>>.from(data['days'] ?? []);
+
+      // Set all days to inactive, then set the selected day as active
+      for (var i = 0; i < days.length; i++) {
+        days[i]['isActive'] = days[i]['id'] == dayId;
+        // Reset completion if setting this day as active
+        if (days[i]['id'] == dayId) {
+          days[i]['isCompleted'] = false;
+          days[i]['completedDate'] = null;
+        }
+      }
+
+      await firestore.collection('workouts').doc(workoutId).update({
+        'days': days,
+        'updatedAt': DateTime.now().toIso8601String(),
+      });
+
+      return const Right(unit);
+    } on FirebaseException catch (e) {
+      return Left(ServerFailure(e.message ?? 'Failed to set active day'));
+    } catch (e) {
+      return Left(ServerFailure(e.toString()));
+    }
+  }
+
 }

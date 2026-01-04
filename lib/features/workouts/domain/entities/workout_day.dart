@@ -10,5 +10,9 @@ sealed class WorkoutDay with _$WorkoutDay {
     required String name,
     required int dayNumber,
     required List<Exercise> exercises,
+    @Default(false) bool isRestDay,
+    @Default(false) bool isCompleted,
+    @Default(false) bool isActive,
+    DateTime? completedDate,
   }) = _WorkoutDay;
 }

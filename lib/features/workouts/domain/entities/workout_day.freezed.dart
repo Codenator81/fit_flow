@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$WorkoutDay {
 
- String get id; String get name; int get dayNumber; List<Exercise> get exercises;
+ String get id; String get name; int get dayNumber; List<Exercise> get exercises; bool get isRestDay; bool get isCompleted; bool get isActive; DateTime? get completedDate;
 /// Create a copy of WorkoutDay
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $WorkoutDayCopyWith<WorkoutDay> get copyWith => _$WorkoutDayCopyWithImpl<Workout
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other.exercises, exercises));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(exercises));
+int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(exercises),isRestDay,isCompleted,isActive,completedDate);
 
 @override
 String toString() {
-  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises)';
+  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises, isRestDay: $isRestDay, isCompleted: $isCompleted, isActive: $isActive, completedDate: $completedDate)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $WorkoutDayCopyWith<$Res>  {
   factory $WorkoutDayCopyWith(WorkoutDay value, $Res Function(WorkoutDay) _then) = _$WorkoutDayCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, int dayNumber, List<Exercise> exercises
+ String id, String name, int dayNumber, List<Exercise> exercises, bool isRestDay, bool isCompleted, bool isActive, DateTime? completedDate
 });
 
 
@@ -62,13 +62,17 @@ class _$WorkoutDayCopyWithImpl<$Res>
 
 /// Create a copy of WorkoutDay
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? dayNumber = null,Object? exercises = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? dayNumber = null,Object? exercises = null,Object? isRestDay = null,Object? isCompleted = null,Object? isActive = null,Object? completedDate = freezed,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,dayNumber: null == dayNumber ? _self.dayNumber : dayNumber // ignore: cast_nullable_to_non_nullable
 as int,exercises: null == exercises ? _self.exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<Exercise>,
+as List<Exercise>,isRestDay: null == isRestDay ? _self.isRestDay : isRestDay // ignore: cast_nullable_to_non_nullable
+as bool,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,completedDate: freezed == completedDate ? _self.completedDate : completedDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 
@@ -150,10 +154,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int dayNumber,  List<Exercise> exercises)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int dayNumber,  List<Exercise> exercises,  bool isRestDay,  bool isCompleted,  bool isActive,  DateTime? completedDate)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _WorkoutDay() when $default != null:
-return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);case _:
+return $default(_that.id,_that.name,_that.dayNumber,_that.exercises,_that.isRestDay,_that.isCompleted,_that.isActive,_that.completedDate);case _:
   return orElse();
 
 }
@@ -171,10 +175,10 @@ return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int dayNumber,  List<Exercise> exercises)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int dayNumber,  List<Exercise> exercises,  bool isRestDay,  bool isCompleted,  bool isActive,  DateTime? completedDate)  $default,) {final _that = this;
 switch (_that) {
 case _WorkoutDay():
-return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);}
+return $default(_that.id,_that.name,_that.dayNumber,_that.exercises,_that.isRestDay,_that.isCompleted,_that.isActive,_that.completedDate);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -188,10 +192,10 @@ return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int dayNumber,  List<Exercise> exercises)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int dayNumber,  List<Exercise> exercises,  bool isRestDay,  bool isCompleted,  bool isActive,  DateTime? completedDate)?  $default,) {final _that = this;
 switch (_that) {
 case _WorkoutDay() when $default != null:
-return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);case _:
+return $default(_that.id,_that.name,_that.dayNumber,_that.exercises,_that.isRestDay,_that.isCompleted,_that.isActive,_that.completedDate);case _:
   return null;
 
 }
@@ -203,7 +207,7 @@ return $default(_that.id,_that.name,_that.dayNumber,_that.exercises);case _:
 
 
 class _WorkoutDay implements WorkoutDay {
-  const _WorkoutDay({required this.id, required this.name, required this.dayNumber, required final  List<Exercise> exercises}): _exercises = exercises;
+  const _WorkoutDay({required this.id, required this.name, required this.dayNumber, required final  List<Exercise> exercises, this.isRestDay = false, this.isCompleted = false, this.isActive = false, this.completedDate}): _exercises = exercises;
   
 
 @override final  String id;
@@ -216,6 +220,10 @@ class _WorkoutDay implements WorkoutDay {
   return EqualUnmodifiableListView(_exercises);
 }
 
+@override@JsonKey() final  bool isRestDay;
+@override@JsonKey() final  bool isCompleted;
+@override@JsonKey() final  bool isActive;
+@override final  DateTime? completedDate;
 
 /// Create a copy of WorkoutDay
 /// with the given fields replaced by the non-null parameter values.
@@ -227,16 +235,16 @@ _$WorkoutDayCopyWith<_WorkoutDay> get copyWith => __$WorkoutDayCopyWithImpl<_Wor
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other._exercises, _exercises));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(_exercises));
+int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(_exercises),isRestDay,isCompleted,isActive,completedDate);
 
 @override
 String toString() {
-  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises)';
+  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises, isRestDay: $isRestDay, isCompleted: $isCompleted, isActive: $isActive, completedDate: $completedDate)';
 }
 
 
@@ -247,7 +255,7 @@ abstract mixin class _$WorkoutDayCopyWith<$Res> implements $WorkoutDayCopyWith<$
   factory _$WorkoutDayCopyWith(_WorkoutDay value, $Res Function(_WorkoutDay) _then) = __$WorkoutDayCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, int dayNumber, List<Exercise> exercises
+ String id, String name, int dayNumber, List<Exercise> exercises, bool isRestDay, bool isCompleted, bool isActive, DateTime? completedDate
 });
 
 
@@ -264,13 +272,17 @@ class __$WorkoutDayCopyWithImpl<$Res>
 
 /// Create a copy of WorkoutDay
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? dayNumber = null,Object? exercises = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? dayNumber = null,Object? exercises = null,Object? isRestDay = null,Object? isCompleted = null,Object? isActive = null,Object? completedDate = freezed,}) {
   return _then(_WorkoutDay(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,dayNumber: null == dayNumber ? _self.dayNumber : dayNumber // ignore: cast_nullable_to_non_nullable
 as int,exercises: null == exercises ? _self._exercises : exercises // ignore: cast_nullable_to_non_nullable
-as List<Exercise>,
+as List<Exercise>,isRestDay: null == isRestDay ? _self.isRestDay : isRestDay // ignore: cast_nullable_to_non_nullable
+as bool,isCompleted: null == isCompleted ? _self.isCompleted : isCompleted // ignore: cast_nullable_to_non_nullable
+as bool,isActive: null == isActive ? _self.isActive : isActive // ignore: cast_nullable_to_non_nullable
+as bool,completedDate: freezed == completedDate ? _self.completedDate : completedDate // ignore: cast_nullable_to_non_nullable
+as DateTime?,
   ));
 }
 

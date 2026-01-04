@@ -77,9 +77,6 @@ class DayDetailPage extends StatelessWidget {
   }
 
   Widget _buildExerciseCard(BuildContext context, dynamic exercise) {
-    final isCompleted =
-        exercise.completedSets > 0 || exercise.completedReps > 0;
-
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       padding: const EdgeInsets.all(16),
@@ -87,9 +84,7 @@ class DayDetailPage extends StatelessWidget {
         color: AppColors.surface,
         borderRadius: BorderRadius.circular(16),
         border: Border.all(
-          color: isCompleted
-              ? AppColors.success.withValues(alpha: 0.5)
-              : AppColors.primary.withValues(alpha: 0.3),
+          color: AppColors.primary.withValues(alpha: 0.3),
           width: 2,
         ),
       ),
@@ -97,89 +92,25 @@ class DayDetailPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // Exercise name
-          Row(
-            children: [
-              Expanded(child: Text(exercise.name, style: AppTextStyles.h3)),
-              if (isCompleted)
-                Icon(Icons.check_circle, color: AppColors.success, size: 24),
-            ],
-          ),
+          Text(exercise.name, style: AppTextStyles.h3),
           const SizedBox(height: 16),
 
-          // Expected vs Completed
+          // Sets and Reps
           Row(
             children: [
-              Expanded(
-                child: _buildStatColumn(
-                  'Expected',
-                  '${exercise.expectedSets} sets × ${exercise.expectedReps} reps',
-                  AppColors.textSecondary,
-                ),
-              ),
-              Container(width: 1, height: 40, color: AppColors.textTertiary),
-              Expanded(
-                child: _buildStatColumn(
-                  'Completed',
-                  '${exercise.completedSets} sets × ${exercise.completedReps} reps',
-                  isCompleted ? AppColors.success : AppColors.textSecondary,
+              Icon(Icons.fitness_center, color: AppColors.primary, size: 20),
+              const SizedBox(width: 8),
+              Text(
+                '${exercise.sets} sets × ${exercise.reps} reps',
+                style: AppTextStyles.bodyLarge.copyWith(
+                  color: AppColors.textSecondary,
+                  fontWeight: FontWeight.bold,
                 ),
               ),
             ],
-          ),
-          const SizedBox(height: 16),
-
-          // Update progress button
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: isCompleted
-                    ? AppColors.gradientPink
-                    : AppColors.gradientOrange,
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: ElevatedButton(
-              onPressed: () => _showUpdateProgressDialog(context, exercise),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.transparent,
-                shadowColor: Colors.transparent,
-                padding: const EdgeInsets.symmetric(vertical: 12),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(12),
-                ),
-              ),
-              child: Text(
-                isCompleted ? 'Update Progress' : 'Log Progress',
-                style: AppTextStyles.button.copyWith(color: Colors.white),
-              ),
-            ),
           ),
         ],
       ),
-    );
-  }
-
-  Widget _buildStatColumn(String label, String value, Color color) {
-    return Column(
-      children: [
-        Text(
-          label,
-          style: AppTextStyles.bodySmall.copyWith(
-            color: AppColors.textTertiary,
-          ),
-        ),
-        const SizedBox(height: 4),
-        Text(
-          value,
-          style: AppTextStyles.bodyMedium.copyWith(
-            color: color,
-            fontWeight: FontWeight.bold,
-          ),
-          textAlign: TextAlign.center,
-        ),
-      ],
     );
   }
 
@@ -187,6 +118,7 @@ class DayDetailPage extends StatelessWidget {
     final nameController = TextEditingController();
     final setsController = TextEditingController();
     final repsController = TextEditingController();
+    final restSecondsController = TextEditingController(text: '60');
     final formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -300,6 +232,46 @@ class DayDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
+              const SizedBox(height: 16),
+              TextFormField(
+                controller: restSecondsController,
+                keyboardType: TextInputType.number,
+                style: AppTextStyles.bodyLarge,
+                decoration: InputDecoration(
+                  labelText: 'Rest Time (seconds)',
+                  labelStyle: AppTextStyles.bodyMedium.copyWith(
+                    color: AppColors.textSecondary,
+                  ),
+                  hintText: 'Default: 60 seconds',
+                  filled: true,
+                  fillColor: AppColors.surface,
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: BorderSide.none,
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12),
+                    borderSide: const BorderSide(
+                      color: AppColors.primary,
+                      width: 2,
+                    ),
+                  ),
+                  prefixIcon: const Icon(Icons.timer, color: AppColors.primary),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Required';
+                  }
+                  final seconds = int.tryParse(value);
+                  if (seconds == null) {
+                    return 'Invalid';
+                  }
+                  if (seconds <= 0) {
+                    return 'Must be > 0';
+                  }
+                  return null;
+                },
+              ),
             ],
           ),
         ),
@@ -323,6 +295,7 @@ class DayDetailPage extends StatelessWidget {
                     exerciseName: nameController.text.trim(),
                     sets: int.parse(setsController.text),
                     reps: int.parse(repsController.text),
+                    restSeconds: int.parse(restSecondsController.text),
                   ),
                 );
                 Navigator.pop(dialogContext);
@@ -331,145 +304,6 @@ class DayDetailPage extends StatelessWidget {
             style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
             child: Text(
               'Add',
-              style: AppTextStyles.button.copyWith(color: Colors.white),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showUpdateProgressDialog(BuildContext context, dynamic exercise) {
-    final setsController = TextEditingController(
-      text: exercise.completedSets.toString(),
-    );
-    final repsController = TextEditingController(
-      text: exercise.completedReps.toString(),
-    );
-    final formKey = GlobalKey<FormState>();
-
-    showDialog(
-      context: context,
-      builder: (dialogContext) => AlertDialog(
-        backgroundColor: AppColors.background,
-        title: Text('Update Progress', style: AppTextStyles.h3),
-        content: Form(
-          key: formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(
-                exercise.name,
-                style: AppTextStyles.h3.copyWith(color: AppColors.primary),
-              ),
-              const SizedBox(height: 16),
-              Text(
-                'Expected: ${exercise.expectedSets} sets × ${exercise.expectedReps} reps',
-                style: AppTextStyles.bodyMedium.copyWith(
-                  color: AppColors.textSecondary,
-                ),
-              ),
-              const SizedBox(height: 24),
-              Row(
-                children: [
-                  Expanded(
-                    child: TextFormField(
-                      controller: setsController,
-                      keyboardType: TextInputType.number,
-                      style: AppTextStyles.bodyLarge,
-                      decoration: InputDecoration(
-                        labelText: 'Completed Sets',
-                        filled: true,
-                        fillColor: AppColors.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Required';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Invalid';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: TextFormField(
-                      controller: repsController,
-                      keyboardType: TextInputType.number,
-                      style: AppTextStyles.bodyLarge,
-                      decoration: InputDecoration(
-                        labelText: 'Completed Reps',
-                        filled: true,
-                        fillColor: AppColors.surface,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: const BorderSide(
-                            color: AppColors.primary,
-                            width: 2,
-                          ),
-                        ),
-                      ),
-                      validator: (value) {
-                        if (value == null || value.isEmpty) {
-                          return 'Required';
-                        }
-                        if (int.tryParse(value) == null) {
-                          return 'Invalid';
-                        }
-                        return null;
-                      },
-                    ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(dialogContext),
-            child: Text(
-              'Cancel',
-              style: AppTextStyles.button.copyWith(
-                color: AppColors.textSecondary,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              if (formKey.currentState!.validate()) {
-                context.read<WorkoutBloc>().add(
-                  WorkoutEvent.updateExerciseProgress(
-                    workoutId: workout.id,
-                    dayId: day.id,
-                    exerciseId: exercise.id,
-                    completedSets: int.parse(setsController.text),
-                    completedReps: int.parse(repsController.text),
-                  ),
-                );
-                Navigator.pop(dialogContext);
-              }
-            },
-            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
-            child: Text(
-              'Update',
               style: AppTextStyles.button.copyWith(color: Colors.white),
             ),
           ),
