@@ -11,10 +11,12 @@ import '../test/fakes/sample_data.dart';
 void main() {
   final binding = IntegrationTestWidgetsFlutterBinding.ensureInitialized();
   var surfaceConverted = false;
+  // The binding reverts the surface in each test's tear-down.
+  setUp(() => surfaceConverted = false);
 
   Future<void> takeScreenshot(WidgetTester tester, String name) async {
     // Android renders through a platform surface that must be converted
-    // (once per run) before a screenshot can be taken.
+    // (once per test) before a screenshot can be taken.
     if (!surfaceConverted) {
       await binding.convertFlutterSurfaceToImage();
       surfaceConverted = true;
