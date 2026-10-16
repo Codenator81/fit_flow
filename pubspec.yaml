@@ -28,7 +28,7 @@ dependencies:
   intl: ^0.20.3
   json_annotation: ^4.9.0
   pretty_dio_logger: ^1.4.0
-  vibration: ^2.0.0
+  vibration: ^3.2.1
 
 dev_dependencies:
   flutter_test:
