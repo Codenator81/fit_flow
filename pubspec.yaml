@@ -37,3 +37,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Bundled Google Fonts: the app works offline on first launch and tests
+  # (golden screenshots) render real typography without network access.
+  assets:
+    - google_fonts/
