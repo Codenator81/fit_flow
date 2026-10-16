@@ -30,9 +30,7 @@ class MainApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: AppTheme.darkTheme,
       home: const AuthGate(),
-      routes: {
-        '/settings': (context) => const SettingsPage(),
-      },
+      routes: {'/settings': (context) => const SettingsPage()},
     );
   }
 }

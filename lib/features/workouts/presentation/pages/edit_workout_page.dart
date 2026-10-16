@@ -44,7 +44,9 @@ class EditWorkoutPage extends StatelessWidget {
                   const SizedBox(height: 24),
 
                   // Days List
-                  ...currentWorkout.days.map((day) => _buildDayCard(context, currentWorkout, day)),
+                  ...currentWorkout.days.map(
+                    (day) => _buildDayCard(context, currentWorkout, day),
+                  ),
 
                   const SizedBox(height: 16),
 
@@ -68,7 +70,8 @@ class EditWorkoutPage extends StatelessWidget {
                         ],
                       ),
                       child: ElevatedButton.icon(
-                        onPressed: () => _showAddDayDialog(context, currentWorkout),
+                        onPressed: () =>
+                            _showAddDayDialog(context, currentWorkout),
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.transparent,
                           shadowColor: Colors.transparent,
@@ -83,7 +86,9 @@ class EditWorkoutPage extends StatelessWidget {
                         icon: const Icon(Icons.add, color: Colors.white),
                         label: Text(
                           'Add Day',
-                          style: AppTextStyles.button.copyWith(color: Colors.white),
+                          style: AppTextStyles.button.copyWith(
+                            color: Colors.white,
+                          ),
                         ),
                       ),
                     ),
@@ -129,11 +134,7 @@ class EditWorkoutPage extends StatelessWidget {
                     color: AppColors.info,
                     shape: BoxShape.circle,
                   ),
-                  child: const Icon(
-                    Icons.hotel,
-                    color: Colors.white,
-                    size: 20,
-                  ),
+                  child: const Icon(Icons.hotel, color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 12),
               ],
@@ -143,10 +144,7 @@ class EditWorkoutPage extends StatelessWidget {
                   children: [
                     Row(
                       children: [
-                        Text(
-                          day.name,
-                          style: AppTextStyles.h3,
-                        ),
+                        Text(day.name, style: AppTextStyles.h3),
                         if (day.isRestDay) ...[
                           const SizedBox(width: 8),
                           Container(
@@ -155,7 +153,9 @@ class EditWorkoutPage extends StatelessWidget {
                               vertical: 4,
                             ),
                             decoration: BoxDecoration(
-                              color: AppColors.textTertiary.withValues(alpha: 0.2),
+                              color: AppColors.textTertiary.withValues(
+                                alpha: 0.2,
+                              ),
                               borderRadius: BorderRadius.circular(8),
                             ),
                             child: Text(
@@ -183,7 +183,8 @@ class EditWorkoutPage extends StatelessWidget {
               ),
               // Delete Icon Button
               IconButton(
-                onPressed: () => _showDeleteDayConfirmation(context, workout, day),
+                onPressed: () =>
+                    _showDeleteDayConfirmation(context, workout, day),
                 icon: const Icon(Icons.delete_outline),
                 color: AppColors.error,
                 tooltip: 'Delete Day',
@@ -196,32 +197,34 @@ class EditWorkoutPage extends StatelessWidget {
             const SizedBox(height: 16),
             const Divider(color: AppColors.textTertiary),
             const SizedBox(height: 12),
-            ...day.exercises.map((exercise) => Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Row(
-                    children: [
-                      Icon(
-                        Icons.fitness_center,
-                        size: 16,
-                        color: AppColors.primary,
+            ...day.exercises.map(
+              (exercise) => Padding(
+                padding: const EdgeInsets.only(bottom: 8),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.fitness_center,
+                      size: 16,
+                      color: AppColors.primary,
+                    ),
+                    const SizedBox(width: 8),
+                    Expanded(
+                      child: Text(
+                        exercise.name,
+                        style: AppTextStyles.bodyMedium,
                       ),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          exercise.name,
-                          style: AppTextStyles.bodyMedium,
-                        ),
+                    ),
+                    Text(
+                      '${exercise.sets}×${exercise.reps}',
+                      style: AppTextStyles.bodyMedium.copyWith(
+                        color: AppColors.textSecondary,
+                        fontWeight: FontWeight.bold,
                       ),
-                      Text(
-                        '${exercise.sets}×${exercise.reps}',
-                        style: AppTextStyles.bodyMedium.copyWith(
-                          color: AppColors.textSecondary,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                    ],
-                  ),
-                )),
+                    ),
+                  ],
+                ),
+              ),
+            ),
           ],
 
           // Add Exercise Button (if not rest day)
@@ -298,10 +301,7 @@ class EditWorkoutPage extends StatelessWidget {
                     isRestDay = value ?? false;
                   });
                 },
-                title: Text(
-                  'Rest Day',
-                  style: AppTextStyles.bodyMedium,
-                ),
+                title: Text('Rest Day', style: AppTextStyles.bodyMedium),
                 subtitle: Text(
                   'Mark this as a recovery day',
                   style: AppTextStyles.bodySmall.copyWith(
@@ -359,7 +359,11 @@ class EditWorkoutPage extends StatelessWidget {
     );
   }
 
-  void _showAddExerciseDialog(BuildContext context, Workout workout, WorkoutDay day) {
+  void _showAddExerciseDialog(
+    BuildContext context,
+    Workout workout,
+    WorkoutDay day,
+  ) {
     final nameController = TextEditingController();
     final setsController = TextEditingController();
     final repsController = TextEditingController();
@@ -545,7 +549,11 @@ class EditWorkoutPage extends StatelessWidget {
     );
   }
 
-  void _showDeleteDayConfirmation(BuildContext context, Workout workout, WorkoutDay day) {
+  void _showDeleteDayConfirmation(
+    BuildContext context,
+    Workout workout,
+    WorkoutDay day,
+  ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -582,16 +590,11 @@ class EditWorkoutPage extends StatelessWidget {
               // Dispatch DeleteDay event after dialog is closed
               Future.microtask(() {
                 bloc.add(
-                  WorkoutEvent.deleteDay(
-                    workoutId: workoutId,
-                    dayId: dayId,
-                  ),
+                  WorkoutEvent.deleteDay(workoutId: workoutId, dayId: dayId),
                 );
               });
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.error,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.error),
             child: Text(
               'Delete',
               style: AppTextStyles.button.copyWith(color: Colors.white),

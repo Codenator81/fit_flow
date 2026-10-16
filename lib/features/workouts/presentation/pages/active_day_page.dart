@@ -14,11 +14,7 @@ class ActiveDayPage extends StatefulWidget {
   final Workout workout;
   final WorkoutDay day;
 
-  const ActiveDayPage({
-    super.key,
-    required this.workout,
-    required this.day,
-  });
+  const ActiveDayPage({super.key, required this.workout, required this.day});
 
   @override
   State<ActiveDayPage> createState() => _ActiveDayPageState();
@@ -45,17 +41,15 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         exercise.sets,
         (_) => exercise.reps,
       );
-      _setCompleted[exercise.id] = List.generate(
-        exercise.sets,
-        (_) => false,
-      );
+      _setCompleted[exercise.id] = List.generate(exercise.sets, (_) => false);
       _exerciseCompleted[exercise.id] = false;
     }
   }
 
   void _checkExerciseCompletion(String exerciseId) {
     // Auto-complete exercise if all sets are complete
-    final allSetsComplete = _setCompleted[exerciseId]?.every((completed) => completed) ?? false;
+    final allSetsComplete =
+        _setCompleted[exerciseId]?.every((completed) => completed) ?? false;
     if (allSetsComplete && (_setCompleted[exerciseId]?.isNotEmpty ?? false)) {
       setState(() {
         _exerciseCompleted[exerciseId] = true;
@@ -66,9 +60,13 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   @override
   Widget build(BuildContext context) {
     // Count manually completed exercises
-    final completedExercises = _exerciseCompleted.values.where((completed) => completed).length;
+    final completedExercises = _exerciseCompleted.values
+        .where((completed) => completed)
+        .length;
     final totalExercises = widget.day.exercises.length;
-    final progress = totalExercises > 0 ? completedExercises / totalExercises : 0.0;
+    final progress = totalExercises > 0
+        ? completedExercises / totalExercises
+        : 0.0;
 
     return Scaffold(
       appBar: AppBar(
@@ -184,7 +182,10 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 ],
               ),
               child: ElevatedButton.icon(
-                onPressed: (completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay
+                onPressed:
+                    (completedExercises == totalExercises &&
+                            totalExercises > 0) ||
+                        widget.day.isRestDay
                     ? () => _finishDay(context)
                     : null,
                 style: ElevatedButton.styleFrom(
@@ -201,12 +202,22 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 ),
                 icon: Icon(
                   Icons.check_circle,
-                  color: ((completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
+                  color:
+                      ((completedExercises == totalExercises &&
+                              totalExercises > 0) ||
+                          widget.day.isRestDay)
+                      ? Colors.white
+                      : AppColors.textTertiary,
                 ),
                 label: Text(
                   'Finish Day',
                   style: AppTextStyles.button.copyWith(
-                    color: ((completedExercises == totalExercises && totalExercises > 0) || widget.day.isRestDay) ? Colors.white : AppColors.textTertiary,
+                    color:
+                        ((completedExercises == totalExercises &&
+                                totalExercises > 0) ||
+                            widget.day.isRestDay)
+                        ? Colors.white
+                        : AppColors.textTertiary,
                   ),
                 ),
               ),
@@ -251,7 +262,9 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                       Text(
                         exercise.name,
                         style: AppTextStyles.h3.copyWith(
-                          color: isCompleted ? AppColors.success : AppColors.textPrimary,
+                          color: isCompleted
+                              ? AppColors.success
+                              : AppColors.textPrimary,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -460,10 +473,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                     decoration: BoxDecoration(
                       color: AppColors.primary.withValues(alpha: 0.2),
                       borderRadius: BorderRadius.circular(8),
-                      border: Border.all(
-                        color: AppColors.primary,
-                        width: 2,
-                      ),
+                      border: Border.all(color: AppColors.primary, width: 2),
                     ),
                     child: Center(
                       child: Text(
@@ -554,10 +564,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                 children: [
                   Icon(Icons.history, color: AppColors.primary),
                   const SizedBox(width: 8),
-                  Text(
-                    'History - ${exercise.name}',
-                    style: AppTextStyles.h3,
-                  ),
+                  Text('History - ${exercise.name}', style: AppTextStyles.h3),
                 ],
               ),
               const SizedBox(height: 16),
@@ -608,10 +615,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                               ),
                             ],
                           ),
-                          Icon(
-                            Icons.fitness_center,
-                            color: AppColors.primary,
-                          ),
+                          Icon(Icons.fitness_center, color: AppColors.primary),
                         ],
                       ),
                     );
@@ -687,7 +691,9 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                       .map((exercise) {
                         final sets = _setReps[exercise.id]!;
                         final maxSets = sets.length;
-                        final maxReps = sets.isNotEmpty ? sets.reduce((a, b) => a > b ? a : b) : 0;
+                        final maxReps = sets.isNotEmpty
+                            ? sets.reduce((a, b) => a > b ? a : b)
+                            : 0;
 
                         return Padding(
                           padding: const EdgeInsets.symmetric(vertical: 4),
@@ -733,9 +739,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
               Navigator.pop(dialogContext);
               _saveAndFinish(context);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.success,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
             child: Text(
               'Finish',
               style: AppTextStyles.button.copyWith(color: Colors.white),
@@ -779,10 +783,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         final maxSets = sets.length;
         final maxReps = sets.reduce((a, b) => a > b ? a : b);
 
-        exerciseProgress[exercise.id] = {
-          'sets': maxSets,
-          'reps': maxReps,
-        };
+        exerciseProgress[exercise.id] = {'sets': maxSets, 'reps': maxReps};
       }
     }
 
@@ -870,7 +871,10 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
     try {
       final hasVibrator = await Vibration.hasVibrator();
       if (hasVibrator == true) {
-        Vibration.vibrate(pattern: [0, 200, 100, 200, 100, 200], intensities: [0, 128, 0, 128, 0, 128]);
+        Vibration.vibrate(
+          pattern: [0, 200, 100, 200, 100, 200],
+          intensities: [0, 128, 0, 128, 0, 128],
+        );
       }
     } catch (e) {
       // Vibration not supported on this device
@@ -912,18 +916,19 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
             color: isFinished
                 ? AppColors.success
                 : isWarning
-                    ? AppColors.warning
-                    : AppColors.primary,
+                ? AppColors.warning
+                : AppColors.primary,
             width: 3,
           ),
           boxShadow: [
             BoxShadow(
-              color: (isFinished
-                      ? AppColors.success
-                      : isWarning
+              color:
+                  (isFinished
+                          ? AppColors.success
+                          : isWarning
                           ? AppColors.warning
                           : AppColors.primary)
-                  .withValues(alpha: 0.3),
+                      .withValues(alpha: 0.3),
               blurRadius: 30,
               spreadRadius: 5,
             ),
@@ -939,8 +944,8 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
                 color: isFinished
                     ? AppColors.success
                     : isWarning
-                        ? AppColors.warning
-                        : AppColors.primary,
+                    ? AppColors.warning
+                    : AppColors.primary,
               ),
             ),
             const SizedBox(height: 8),
@@ -972,8 +977,8 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
                         isFinished
                             ? AppColors.success
                             : isWarning
-                                ? AppColors.warning
-                                : AppColors.primary,
+                            ? AppColors.warning
+                            : AppColors.primary,
                       ),
                     ),
                   ),
@@ -988,8 +993,8 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
                           color: isFinished
                               ? AppColors.success
                               : isWarning
-                                  ? AppColors.warning
-                                  : AppColors.primary,
+                              ? AppColors.warning
+                              : AppColors.primary,
                         ),
                       ),
                       if (!isFinished)
@@ -1016,8 +1021,8 @@ class _RestTimerDialogState extends State<_RestTimerDialog> {
                   backgroundColor: isFinished
                       ? AppColors.success
                       : isWarning
-                          ? AppColors.warning
-                          : AppColors.primary,
+                      ? AppColors.warning
+                      : AppColors.primary,
                   padding: const EdgeInsets.symmetric(vertical: 16),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(12),

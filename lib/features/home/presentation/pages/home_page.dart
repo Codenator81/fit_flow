@@ -34,7 +34,9 @@ class HomePage extends StatelessWidget {
                   await Navigator.pushNamed(context, '/settings');
                   // Reload workouts when returning from settings
                   if (context.mounted) {
-                    context.read<WorkoutBloc>().add(const WorkoutEvent.loadWorkouts());
+                    context.read<WorkoutBloc>().add(
+                      const WorkoutEvent.loadWorkouts(),
+                    );
                   }
                 },
               ),
@@ -42,44 +44,46 @@ class HomePage extends StatelessWidget {
           ),
           body: BlocBuilder<WorkoutBloc, WorkoutState>(
             builder: (context, state) {
-            return SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: SizedBox(
-                width: double.infinity,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                  // App Title
-                  Text('FITFLOW', style: AppTextStyles.h1),
-                  const SizedBox(height: 8),
-                  Text(
-                    'Your Fitness Journey Starts Here',
-                    style: AppTextStyles.bodyLarge,
+              return SingleChildScrollView(
+                padding: const EdgeInsets.all(24),
+                child: SizedBox(
+                  width: double.infinity,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      // App Title
+                      Text('FITFLOW', style: AppTextStyles.h1),
+                      const SizedBox(height: 8),
+                      Text(
+                        'Your Fitness Journey Starts Here',
+                        style: AppTextStyles.bodyLarge,
+                      ),
+                      const SizedBox(height: 32),
+
+                      // Current Workout Status Card
+                      _buildWorkoutStatusCard(context, state),
+                      const SizedBox(height: 32),
+
+                      // Quick Action Button
+                      if (state is WorkoutLoaded &&
+                          state.workouts.isNotEmpty) ...[
+                        _buildGradientButton(
+                          context: context,
+                          text: 'START WORKOUT',
+                          gradient: AppColors.gradientOrange,
+                          glowColor: AppColors.glowOrange,
+                          onPressed: () =>
+                              _navigateToCurrentWorkout(context, state),
+                        ),
+                      ],
+                    ],
                   ),
-                  const SizedBox(height: 32),
-
-                  // Current Workout Status Card
-                  _buildWorkoutStatusCard(context, state),
-                  const SizedBox(height: 32),
-
-                  // Quick Action Button
-                  if (state is WorkoutLoaded && state.workouts.isNotEmpty) ...[
-                    _buildGradientButton(
-                      context: context,
-                      text: 'START WORKOUT',
-                      gradient: AppColors.gradientOrange,
-                      glowColor: AppColors.glowOrange,
-                      onPressed: () => _navigateToCurrentWorkout(context, state),
-                    ),
-                  ],
-                ],
-              ),
                 ),
-            );
-          },
+              );
+            },
+          ),
         ),
       ),
-        ),
     );
   }
 
@@ -117,11 +121,7 @@ class HomePage extends StatelessWidget {
           final currentWorkout = workouts.first;
           return Column(
             children: [
-              Icon(
-                Icons.fitness_center,
-                size: 48,
-                color: AppColors.primary,
-              ),
+              Icon(Icons.fitness_center, size: 48, color: AppColors.primary),
               const SizedBox(height: 16),
               Text(
                 'CURRENT WORKOUT',
@@ -133,9 +133,7 @@ class HomePage extends StatelessWidget {
               const SizedBox(height: 8),
               Text(
                 currentWorkout.name,
-                style: AppTextStyles.h2.copyWith(
-                  color: AppColors.primary,
-                ),
+                style: AppTextStyles.h2.copyWith(color: AppColors.primary),
                 textAlign: TextAlign.center,
               ),
               const SizedBox(height: 8),
@@ -170,11 +168,7 @@ class HomePage extends StatelessWidget {
   Widget _buildEmptyWorkoutState(BuildContext context) {
     return Column(
       children: [
-        Icon(
-          Icons.fitness_center,
-          size: 64,
-          color: AppColors.textTertiary,
-        ),
+        Icon(Icons.fitness_center, size: 64, color: AppColors.textTertiary),
         const SizedBox(height: 16),
         Text(
           'No Workout Selected',
@@ -278,7 +272,10 @@ class HomePage extends StatelessWidget {
     );
   }
 
-  void _navigateToCurrentWorkout(BuildContext context, WorkoutLoaded state) async {
+  void _navigateToCurrentWorkout(
+    BuildContext context,
+    WorkoutLoaded state,
+  ) async {
     if (state.workouts.isNotEmpty) {
       await Navigator.push(
         context,
@@ -295,5 +292,4 @@ class HomePage extends StatelessWidget {
       }
     }
   }
-
 }

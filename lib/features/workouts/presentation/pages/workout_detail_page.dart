@@ -23,10 +23,13 @@ class WorkoutDetailPage extends StatelessWidget {
       ),
       body: BlocBuilder<WorkoutBloc, WorkoutState>(
         builder: (context, state) {
-          final currentWorkout = state is WorkoutDetail ? state.workout : workout;
+          final currentWorkout = state is WorkoutDetail
+              ? state.workout
+              : workout;
 
           // Check if all days are completed
-          final allDaysCompleted = currentWorkout.days.isNotEmpty &&
+          final allDaysCompleted =
+              currentWorkout.days.isNotEmpty &&
               currentWorkout.days.every((day) => day.isCompleted);
 
           return SingleChildScrollView(
@@ -111,7 +114,8 @@ class WorkoutDetailPage extends StatelessWidget {
                       ],
                     ),
                     child: ElevatedButton.icon(
-                      onPressed: () => _showResetConfirmation(context, currentWorkout),
+                      onPressed: () =>
+                          _showResetConfirmation(context, currentWorkout),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.transparent,
                         shadowColor: Colors.transparent,
@@ -126,7 +130,9 @@ class WorkoutDetailPage extends StatelessWidget {
                       icon: const Icon(Icons.refresh, color: Colors.white),
                       label: Text(
                         'Start Workout Over',
-                        style: AppTextStyles.button.copyWith(color: Colors.white),
+                        style: AppTextStyles.button.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
@@ -144,7 +150,9 @@ class WorkoutDetailPage extends StatelessWidget {
 
                 // Days Grid
                 if (currentWorkout.days.isNotEmpty)
-                  ...currentWorkout.days.map((day) => _buildDayCard(context, currentWorkout, day))
+                  ...currentWorkout.days.map(
+                    (day) => _buildDayCard(context, currentWorkout, day),
+                  )
                 else
                   _buildEmptyState(context),
               ],
@@ -183,19 +191,19 @@ class WorkoutDetailPage extends StatelessWidget {
           color: day.isRestDay
               ? AppColors.info.withValues(alpha: 0.1)
               : day.isCompleted
-                  ? AppColors.success.withValues(alpha: 0.1)
-                  : day.isActive
-                      ? AppColors.primary.withValues(alpha: 0.1)
-                      : AppColors.surface,
+              ? AppColors.success.withValues(alpha: 0.1)
+              : day.isActive
+              ? AppColors.primary.withValues(alpha: 0.1)
+              : AppColors.surface,
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
             color: day.isRestDay
                 ? AppColors.info
                 : day.isCompleted
-                    ? AppColors.success
-                    : day.isActive
-                        ? AppColors.primary
-                        : AppColors.primary.withValues(alpha: 0.3),
+                ? AppColors.success
+                : day.isActive
+                ? AppColors.primary
+                : AppColors.primary.withValues(alpha: 0.3),
             width: 2,
           ),
           boxShadow: day.isActive
@@ -218,20 +226,20 @@ class WorkoutDetailPage extends StatelessWidget {
                 color: day.isCompleted
                     ? AppColors.success
                     : day.isActive
-                        ? AppColors.primary
-                        : day.isRestDay
-                            ? AppColors.info
-                            : AppColors.primary.withValues(alpha: 0.2),
+                    ? AppColors.primary
+                    : day.isRestDay
+                    ? AppColors.info
+                    : AppColors.primary.withValues(alpha: 0.2),
                 shape: BoxShape.circle,
               ),
               child: Icon(
                 day.isCompleted
                     ? Icons.check_circle
                     : day.isRestDay
-                        ? Icons.hotel
-                        : day.isActive
-                            ? Icons.play_circle_filled
-                            : Icons.fitness_center,
+                    ? Icons.hotel
+                    : day.isActive
+                    ? Icons.play_circle_filled
+                    : Icons.fitness_center,
                 color: day.isCompleted || day.isActive || day.isRestDay
                     ? Colors.white
                     : AppColors.primary,
@@ -283,7 +291,9 @@ class WorkoutDetailPage extends StatelessWidget {
                             vertical: 2,
                           ),
                           decoration: BoxDecoration(
-                            color: AppColors.textTertiary.withValues(alpha: 0.3),
+                            color: AppColors.textTertiary.withValues(
+                              alpha: 0.3,
+                            ),
                             borderRadius: BorderRadius.circular(8),
                           ),
                           child: Text(
@@ -322,11 +332,7 @@ class WorkoutDetailPage extends StatelessWidget {
 
             // Status Icon
             if (day.isCompleted)
-              const Icon(
-                Icons.check_circle,
-                color: AppColors.success,
-                size: 32,
-              )
+              const Icon(Icons.check_circle, color: AppColors.success, size: 32)
             else if (!day.isActive && !day.isRestDay)
               const Icon(
                 Icons.arrow_forward_ios,
@@ -352,11 +358,7 @@ class WorkoutDetailPage extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Icon(
-            Icons.fitness_center,
-            size: 64,
-            color: AppColors.textTertiary,
-          ),
+          Icon(Icons.fitness_center, size: 64, color: AppColors.textTertiary),
           const SizedBox(height: 16),
           Text(
             'No Days Yet',
@@ -380,7 +382,9 @@ class WorkoutDetailPage extends StatelessWidget {
       // Show completed day info
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
-          content: Text('Day already completed on ${_formatDate(day.completedDate)}'),
+          content: Text(
+            'Day already completed on ${_formatDate(day.completedDate)}',
+          ),
           backgroundColor: AppColors.success,
         ),
       );
@@ -401,7 +405,11 @@ class WorkoutDetailPage extends StatelessWidget {
     }
   }
 
-  void _showRestDayDialog(BuildContext context, Workout workout, WorkoutDay day) {
+  void _showRestDayDialog(
+    BuildContext context,
+    Workout workout,
+    WorkoutDay day,
+  ) {
     showDialog(
       context: context,
       builder: (dialogContext) => AlertDialog(
@@ -432,9 +440,7 @@ class WorkoutDetailPage extends StatelessWidget {
               Navigator.pop(dialogContext);
               _markRestDayComplete(context, workout, day);
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.success,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.success),
             child: Text(
               'Mark Complete',
               style: AppTextStyles.button.copyWith(color: Colors.white),
@@ -445,7 +451,11 @@ class WorkoutDetailPage extends StatelessWidget {
     );
   }
 
-  void _handleDayLongPress(BuildContext context, Workout workout, WorkoutDay day) {
+  void _handleDayLongPress(
+    BuildContext context,
+    Workout workout,
+    WorkoutDay day,
+  ) {
     if (day.isCompleted) {
       // Reset completed day to active
       _setDayAsActive(context, workout, day);
@@ -459,10 +469,7 @@ class WorkoutDetailPage extends StatelessWidget {
   void _setDayAsActive(BuildContext context, Workout workout, WorkoutDay day) {
     // Dispatch SetActiveDay event
     context.read<WorkoutBloc>().add(
-      WorkoutEvent.setActiveDay(
-        workoutId: workout.id,
-        dayId: day.id,
-      ),
+      WorkoutEvent.setActiveDay(workoutId: workout.id, dayId: day.id),
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -477,13 +484,14 @@ class WorkoutDetailPage extends StatelessWidget {
     );
   }
 
-  void _markRestDayComplete(BuildContext context, Workout workout, WorkoutDay day) {
+  void _markRestDayComplete(
+    BuildContext context,
+    Workout workout,
+    WorkoutDay day,
+  ) {
     // Dispatch MarkRestDayComplete event
     context.read<WorkoutBloc>().add(
-      WorkoutEvent.markRestDayComplete(
-        workoutId: workout.id,
-        dayId: day.id,
-      ),
+      WorkoutEvent.markRestDayComplete(workoutId: workout.id, dayId: day.id),
     );
 
     ScaffoldMessenger.of(context).showSnackBar(
@@ -536,9 +544,7 @@ class WorkoutDetailPage extends StatelessWidget {
                 );
               });
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: AppColors.primary,
-            ),
+            style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
             child: Text(
               'Reset',
               style: AppTextStyles.button.copyWith(color: Colors.white),
