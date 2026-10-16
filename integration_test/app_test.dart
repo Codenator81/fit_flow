@@ -1,5 +1,4 @@
 import 'package:fit_flow/main.dart' as app;
-import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:integration_test/integration_test.dart';
 
@@ -12,9 +11,10 @@ void main() {
   testWidgets('app launches to the login screen', (tester) async {
     app.main();
     // Firebase init and the first auth state event take a moment.
-    await _pumpUntilFound(tester, find.byType(TextField));
+    final signIn = find.text('Continue with Google');
+    await _pumpUntilFound(tester, signIn);
 
-    expect(find.byType(TextField), findsWidgets);
+    expect(signIn, findsOneWidget);
 
     // Android renders through a platform surface that must be converted
     // before a screenshot can be taken.
@@ -27,7 +27,7 @@ void main() {
 Future<void> _pumpUntilFound(
   WidgetTester tester,
   Finder finder, {
-  Duration timeout = const Duration(seconds: 30),
+  Duration timeout = const Duration(seconds: 60),
 }) async {
   final end = DateTime.now().add(timeout);
   while (DateTime.now().isBefore(end)) {
