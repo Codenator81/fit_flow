@@ -2,14 +2,20 @@ name: Emulator tests
 
 # Runs the app on an Android emulator and captures screenshots. Too slow for
 # every PR, so it runs on demand (Actions tab -> Emulator tests -> Run
-# workflow) and once a week to catch regressions.
+# workflow), once a week to catch regressions, and on PRs that change the
+# emulator setup itself.
 on:
   workflow_dispatch:
+  pull_request:
+    paths:
+      - .github/workflows/emulator.yml
+      - integration_test/**
+      - test_driver/**
   schedule:
     - cron: '0 6 * * 1' # Mondays 06:00 UTC
 
 concurrency:
-  group: emulator-${{ github.ref }}
+  group: emulator-${{ github.event.pull_request.number || github.ref }}
   cancel-in-progress: true
 
 permissions:
