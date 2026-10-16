@@ -379,8 +379,6 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   }
 
   Widget _buildSetRow(Exercise exercise, int setIndex) {
-    final sets = _setReps[exercise.id]!;
-    final reps = sets[setIndex];
     final isSetCompleted = _setCompleted[exercise.id]![setIndex];
 
     return Container(
@@ -411,6 +409,9 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                   _checkExerciseCompletion(exercise.id);
                 });
               },
+              // Drop the 48 dp tap padding so the row fits narrow phones.
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
               activeColor: AppColors.success,
               checkColor: Colors.white,
               side: BorderSide(
@@ -445,71 +446,20 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
               ),
             ),
           ),
-          const Spacer(),
-
-          // Reps Controls with Label Below
-          Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              // Reps Controls
-              Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  IconButton(
-                    onPressed: reps > 0
-                        ? () {
-                            setState(() {
-                              _setReps[exercise.id]![setIndex] = reps - 1;
-                            });
-                          }
-                        : null,
-                    icon: const Icon(Icons.remove_circle_outline),
-                    color: AppColors.primary,
-                    iconSize: 28,
-                  ),
-                  Container(
-                    width: 50,
-                    height: 40,
-                    decoration: BoxDecoration(
-                      color: AppColors.primary.withValues(alpha: 0.2),
-                      borderRadius: BorderRadius.circular(8),
-                      border: Border.all(color: AppColors.primary, width: 2),
-                    ),
-                    child: Center(
-                      child: Text(
-                        '$reps',
-                        style: AppTextStyles.stat.copyWith(
-                          color: AppColors.primary,
-                          fontSize: 20,
-                        ),
-                      ),
-                    ),
-                  ),
-                  IconButton(
-                    onPressed: () {
-                      setState(() {
-                        _setReps[exercise.id]![setIndex] = reps + 1;
-                      });
-                    },
-                    icon: const Icon(Icons.add_circle),
-                    color: AppColors.primary,
-                    iconSize: 28,
-                  ),
-                ],
-              ),
-              // Reps Label Below Controls
-              const SizedBox(height: 4),
-              Text(
-                'Reps',
-                style: AppTextStyles.bodySmall.copyWith(
-                  color: isSetCompleted
-                      ? AppColors.success
-                      : AppColors.textTertiary,
-                ),
-              ),
-            ],
-          ),
           const SizedBox(width: 8),
+
+          // Reps Controls with Label Below. They take the remaining width and
+          // scale down on very narrow screens instead of overflowing (#16).
+          Expanded(
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: _buildRepsControls(exercise, setIndex, isSetCompleted),
+              ),
+            ),
+          ),
+          const SizedBox(width: 4),
 
           // Delete Set Button
           IconButton(
@@ -522,9 +472,80 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
             icon: const Icon(Icons.delete_outline),
             color: AppColors.textTertiary,
             iconSize: 20,
+            visualDensity: VisualDensity.compact,
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildRepsControls(
+    Exercise exercise,
+    int setIndex,
+    bool isSetCompleted,
+  ) {
+    final reps = _setReps[exercise.id]![setIndex];
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        // Reps Controls
+        Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            IconButton(
+              onPressed: reps > 0
+                  ? () {
+                      setState(() {
+                        _setReps[exercise.id]![setIndex] = reps - 1;
+                      });
+                    }
+                  : null,
+              icon: const Icon(Icons.remove_circle_outline),
+              color: AppColors.primary,
+              iconSize: 28,
+              visualDensity: VisualDensity.compact,
+            ),
+            Container(
+              width: 50,
+              height: 40,
+              decoration: BoxDecoration(
+                color: AppColors.primary.withValues(alpha: 0.2),
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: AppColors.primary, width: 2),
+              ),
+              child: Center(
+                child: Text(
+                  '$reps',
+                  style: AppTextStyles.stat.copyWith(
+                    color: AppColors.primary,
+                    fontSize: 20,
+                  ),
+                ),
+              ),
+            ),
+            IconButton(
+              onPressed: () {
+                setState(() {
+                  _setReps[exercise.id]![setIndex] = reps + 1;
+                });
+              },
+              icon: const Icon(Icons.add_circle),
+              color: AppColors.primary,
+              iconSize: 28,
+              visualDensity: VisualDensity.compact,
+            ),
+          ],
+        ),
+        // Reps Label Below Controls
+        const SizedBox(height: 4),
+        Text(
+          'Reps',
+          style: AppTextStyles.bodySmall.copyWith(
+            color: isSetCompleted ? AppColors.success : AppColors.textTertiary,
+          ),
+        ),
+      ],
     );
   }
 
