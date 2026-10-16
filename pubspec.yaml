@@ -28,7 +28,7 @@ dependencies:
   intl: ^0.20.3
   json_annotation: ^4.9.0
   pretty_dio_logger: ^1.4.0
-  vibration: ^2.0.0
+  vibration: ^3.2.1
 
 dev_dependencies:
   flutter_test:
@@ -40,3 +40,8 @@ dev_dependencies:
 
 flutter:
   uses-material-design: true
+
+  # Bundled Google Fonts: the app works offline on first launch and tests
+  # (golden screenshots) render real typography without network access.
+  assets:
+    - google_fonts/
