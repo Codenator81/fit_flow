@@ -1,14 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../workouts/presentation/pages/workout_detail_page.dart';
 import '../../../workouts/presentation/bloc/workout_bloc.dart';
 import '../../../workouts/presentation/bloc/workout_event.dart';
 import '../../../workouts/presentation/bloc/workout_state.dart';
-import '../../../workouts/data/repositories/workout_repository_impl.dart';
+import '../../../../injection_container.dart';
 import '../../../workouts/presentation/widgets/add_workout_bottom_sheet.dart';
 
 class HomePage extends StatelessWidget {
@@ -17,12 +15,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => WorkoutBloc(
-        WorkoutRepositoryImpl(
-          firestore: FirebaseFirestore.instance,
-          auth: FirebaseAuth.instance,
-        ),
-      )..add(const WorkoutEvent.loadWorkouts()),
+      create: (context) =>
+          sl<WorkoutBloc>()..add(const WorkoutEvent.loadWorkouts()),
       child: Builder(
         builder: (context) => Scaffold(
           appBar: AppBar(
