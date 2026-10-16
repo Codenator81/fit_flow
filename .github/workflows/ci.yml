@@ -24,6 +24,9 @@ jobs:
         with:
           flutter-version-file: pubspec.yaml
           cache: true
+      # pub get is required: the formatter picks its style from the package's
+      # language version, which it reads from .dart_tool/package_config.json.
+      - run: flutter pub get
       - run: dart format --output=none --set-exit-if-changed .
 
   analyze:
