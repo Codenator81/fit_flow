@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../workouts/presentation/bloc/workout_bloc.dart';
 import '../../../workouts/presentation/bloc/workout_event.dart';
 import '../../../workouts/presentation/bloc/workout_state.dart';
-import '../../../workouts/data/repositories/workout_repository_impl.dart';
+import '../../../../injection_container.dart';
+import '../../../auth/domain/repositories/auth_repository.dart';
 import '../../../workouts/presentation/widgets/add_workout_bottom_sheet.dart';
 import '../../../workouts/presentation/pages/edit_workout_page.dart';
 
@@ -17,12 +16,7 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => WorkoutBloc(
-        WorkoutRepositoryImpl(
-          firestore: FirebaseFirestore.instance,
-          auth: FirebaseAuth.instance,
-        ),
-      )..add(const LoadWorkouts()),
+      create: (context) => sl<WorkoutBloc>()..add(const LoadWorkouts()),
       child: Scaffold(
         appBar: AppBar(title: const Text('Settings')),
         body: BlocBuilder<WorkoutBloc, WorkoutState>(
@@ -54,7 +48,7 @@ class SettingsPage extends StatelessWidget {
                     child: Center(
                       child: Text(
                         _getInitials(
-                          FirebaseAuth.instance.currentUser?.email ?? 'U',
+                          sl<AuthRepository>().currentUser?.email ?? 'U',
                         ),
                         style: AppTextStyles.h1.copyWith(
                           color: Colors.white,
@@ -409,15 +403,21 @@ class SettingsPage extends StatelessWidget {
                       );
 
                       if (shouldLogout == true && context.mounted) {
-                        // Sign out from Firebase
-                        await FirebaseAuth.instance.signOut();
-
-                        // Navigate back to auth gate (which will show login page)
-                        if (context.mounted) {
-                          Navigator.of(
+                        final result = await sl<AuthRepository>().signOut();
+                        if (!context.mounted) return;
+                        result.fold(
+                          (failure) =>
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(failure.message),
+                                  backgroundColor: AppColors.error,
+                                ),
+                              ),
+                          // Back to AuthGate, which now shows the login page.
+                          (_) => Navigator.of(
                             context,
-                          ).popUntil((route) => route.isFirst);
-                        }
+                          ).popUntil((route) => route.isFirst),
+                        );
                       }
                     },
                     style: ElevatedButton.styleFrom(
