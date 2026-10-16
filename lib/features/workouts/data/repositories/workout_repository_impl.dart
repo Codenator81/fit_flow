@@ -103,7 +103,11 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> addDay(String workoutId, String dayName, {bool isRestDay = false}) async {
+  Future<Either<Failure, Unit>> addDay(
+    String workoutId,
+    String dayName, {
+    bool isRestDay = false,
+  }) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
       if (!doc.exists) {
@@ -138,7 +142,10 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   }
 
   @override
-  Future<Either<Failure, Unit>> deleteDay(String workoutId, String dayId) async {
+  Future<Either<Failure, Unit>> deleteDay(
+    String workoutId,
+    String dayId,
+  ) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
       if (!doc.exists) {
@@ -249,7 +256,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         final exerciseId = exercise['id'] as String;
         if (exerciseProgress.containsKey(exerciseId)) {
           final progress = exerciseProgress[exerciseId]!;
-          final history = List<Map<String, dynamic>>.from(exercise['history'] ?? []);
+          final history = List<Map<String, dynamic>>.from(
+            exercise['history'] ?? [],
+          );
 
           // Add new completion to history
           history.insert(0, {
@@ -334,7 +343,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
 
       return const Right(unit);
     } on FirebaseException catch (e) {
-      return Left(ServerFailure(e.message ?? 'Failed to mark rest day complete'));
+      return Left(
+        ServerFailure(e.message ?? 'Failed to mark rest day complete'),
+      );
     } catch (e) {
       return Left(ServerFailure(e.toString()));
     }
@@ -407,5 +418,4 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       return Left(ServerFailure(e.toString()));
     }
   }
-
 }
