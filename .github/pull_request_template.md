@@ -1,3 +1,6 @@
+<!-- Every PR starts from a GitHub issue; keep this line so merging closes it. -->
+Closes #
+
 ## Summary
 
 <!-- 3-5 bullets a reviewer can read in 30 seconds: what changed for the
