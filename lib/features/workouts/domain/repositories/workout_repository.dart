@@ -7,7 +7,11 @@ abstract class WorkoutRepository {
   Future<Either<Failure, Workout>> getWorkout(String id);
   Future<Either<Failure, Workout>> createWorkout(String name);
   Future<Either<Failure, Unit>> deleteWorkout(String id);
-  Future<Either<Failure, Unit>> addDay(String workoutId, String dayName, {bool isRestDay = false});
+  Future<Either<Failure, Unit>> addDay(
+    String workoutId,
+    String dayName, {
+    bool isRestDay = false,
+  });
   Future<Either<Failure, Unit>> deleteDay(String workoutId, String dayId);
   Future<Either<Failure, Unit>> addExercise(
     String workoutId,
@@ -20,7 +24,8 @@ abstract class WorkoutRepository {
   Future<Either<Failure, Unit>> completeDay(
     String workoutId,
     String dayId,
-    Map<String, Map<String, int>> exerciseProgress, // exerciseId -> {sets, reps}
+    Map<String, Map<String, int>>
+    exerciseProgress, // exerciseId -> {sets, reps}
   );
   Future<Either<Failure, Unit>> markRestDayComplete(
     String workoutId,

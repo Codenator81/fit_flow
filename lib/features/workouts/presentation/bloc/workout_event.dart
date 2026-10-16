@@ -10,7 +10,8 @@ sealed class WorkoutEvent with _$WorkoutEvent {
 
   const factory WorkoutEvent.deleteWorkout(String workoutId) = DeleteWorkout;
 
-  const factory WorkoutEvent.loadWorkoutDetail(String workoutId) = LoadWorkoutDetail;
+  const factory WorkoutEvent.loadWorkoutDetail(String workoutId) =
+      LoadWorkoutDetail;
 
   const factory WorkoutEvent.addDay({
     required String workoutId,

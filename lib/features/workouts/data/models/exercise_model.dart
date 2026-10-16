@@ -21,11 +21,7 @@ class ExerciseCompletionModel {
   Map<String, dynamic> toJson() => _$ExerciseCompletionModelToJson(this);
 
   ExerciseCompletion toEntity() {
-    return ExerciseCompletion(
-      date: date,
-      maxSets: maxSets,
-      maxReps: maxReps,
-    );
+    return ExerciseCompletion(date: date, maxSets: maxSets, maxReps: maxReps);
   }
 
   factory ExerciseCompletionModel.fromEntity(ExerciseCompletion completion) {
