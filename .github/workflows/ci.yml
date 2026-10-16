@@ -56,6 +56,56 @@ jobs:
           flutter-version-file: pubspec.yaml
           cache: true
       - run: flutter pub get
+
+      # Lists the golden PNGs this PR adds or changes in one comment, with the
+      # old and new image side by side, so reviewers see the screens without
+      # opening each file. Updated in place on every push.
+      - name: Comment changed goldens on PR
+        if: >-
+          github.event_name == 'pull_request' &&
+          github.event.pull_request.head.repo.full_name == github.repository &&
+          github.actor != 'dependabot[bot]'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const marker = '<!-- golden-screens -->';
+            const { owner, repo } = context.repo;
+            const pr = context.payload.pull_request;
+            const issue_number = pr.number;
+            // blob/<sha>/<path>?raw=true renders for signed-in viewers even in a private repo.
+            const img = (sha, path) =>
+              `<img src="https://github.com/${owner}/${repo}/blob/${sha}/${path}?raw=true" width="300">`;
+
+            const files = (await github.paginate(github.rest.pulls.listFiles, { owner, repo, pull_number: issue_number }))
+              .filter(f => /^test\/goldens\/.*\.png$/.test(f.filename));
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (files.length === 0 && !existing) return;
+
+            let body = `${marker}\n### Screens changed in this PR\n\n`;
+            if (files.length === 0) {
+              body += 'No golden screenshots change in this PR any more.\n';
+            } else {
+              body += `Golden screenshots at ${pr.head.sha.slice(0, 7)}. The Files changed tab also has a swipe / onion-skin diff for each PNG.\n\n`;
+              for (const f of files) {
+                const name = f.filename.replace(/^.*\//, '');
+                body += `#### \`${name}\` (${f.status})\n\n`;
+                if (f.status === 'removed') {
+                  body += `Before:<br>${img(pr.base.sha, f.filename)}\n\n`;
+                } else if (f.status === 'added') {
+                  body += `${img(pr.head.sha, f.filename)}\n\n`;
+                } else {
+                  const before = f.previous_filename || f.filename;
+                  body += `| Before | After |\n|---|---|\n| ${img(pr.base.sha, before)} | ${img(pr.head.sha, f.filename)} |\n\n`;
+                }
+              }
+            }
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
+
       - run: flutter test --coverage
 
       - name: Build coverage report

@@ -34,6 +34,9 @@ jobs:
     name: integration tests (API 34)
     runs-on: ubuntu-latest
     timeout-minutes: 45
+    permissions:
+      contents: write # push screenshots to the ci-screenshots branch
+      pull-requests: write # comment them on the PR
     steps:
       - uses: actions/checkout@v7
 
@@ -115,3 +118,90 @@ jobs:
           path: build/logs/
           retention-days: 14
           if-no-files-found: warn
+
+      # Comments can't carry uploaded images, so the PNGs are committed to the
+      # orphan branch ci-screenshots under runs/<run id>/ and embedded from
+      # there. Skipped for forks and Dependabot, whose tokens are read-only.
+      - name: Publish screenshots
+        id: publish
+        if: >-
+          always() &&
+          hashFiles('build/screenshots/*.png') != '' &&
+          (github.event_name != 'pull_request' ||
+           (github.event.pull_request.head.repo.full_name == github.repository &&
+            github.actor != 'dependabot[bot]'))
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RUN_DIR: runs/${{ github.run_id }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          dir="$RUNNER_TEMP/ci-screenshots"
+          git init -q "$dir"
+          mkdir -p "$RUNNER_TEMP/shots"
+          cp build/screenshots/*.png "$RUNNER_TEMP/shots/"
+          cd "$dir"
+          git remote add origin "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898281+github-actions[bot]@users.noreply.github.com'
+          # Another run may push in between; retry on top of its commit.
+          for attempt in 1 2 3; do
+            rm -rf ./* .git/index
+            if git fetch -q --depth=1 origin ci-screenshots; then
+              git checkout -q -f -B ci-screenshots FETCH_HEAD
+            else
+              git checkout -q --orphan ci-screenshots
+            fi
+            mkdir -p "$RUN_DIR"
+            cp "$RUNNER_TEMP"/shots/*.png "$RUN_DIR/"
+            git add "$RUN_DIR"
+            git commit -q -m "Screenshots from run ${GITHUB_RUN_ID} (${HEAD_SHA::7})"
+            if git push -q origin ci-screenshots; then
+              echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+              exit 0
+            fi
+            sleep $((attempt * 5))
+          done
+          echo "::error::Could not push screenshots to ci-screenshots"
+          exit 1
+
+      - name: Build screenshot report
+        if: always() && steps.publish.outputs.sha != ''
+        env:
+          SHA: ${{ steps.publish.outputs.sha }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          OUTCOME: ${{ job.status }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+        run: |
+          {
+            echo '<!-- emulator-screens -->'
+            echo '### Emulator screenshots'
+            echo
+            echo "Android API ${API_LEVEL}, ${PROFILE}, commit ${HEAD_SHA::7}. [Workflow run](${RUN_URL}) (status: ${OUTCOME})."
+            echo
+            for f in build/screenshots/*.png; do
+              name=$(basename "$f")
+              echo "#### \`${name%.png}\`"
+              echo
+              echo "<img src=\"${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/blob/${SHA}/runs/${GITHUB_RUN_ID}/${name}?raw=true\" width=\"300\">"
+              echo
+            done
+          } > build/screenshots-report.md
+          cat build/screenshots-report.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Comment screenshots on PR
+        if: always() && steps.publish.outputs.sha != '' && github.event_name == 'pull_request'
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const fs = require('fs');
+            const body = fs.readFileSync('build/screenshots-report.md', 'utf8');
+            const marker = '<!-- emulator-screens -->';
+            const { owner, repo } = context.repo;
+            const issue_number = context.issue.number;
+            const comments = await github.paginate(github.rest.issues.listComments, { owner, repo, issue_number });
+            const existing = comments.find(c => c.user.type === 'Bot' && c.body.includes(marker));
+            if (existing) {
+              await github.rest.issues.updateComment({ owner, repo, comment_id: existing.id, body });
+            } else {
+              await github.rest.issues.createComment({ owner, repo, issue_number, body });
+            }
