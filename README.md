@@ -1,83 +1,62 @@
 # FitFlow
 
-A modern Flutter fitness app with offline-first architecture and custom workout workflows.
+[![CI](https://github.com/Codenator81/fit_flow/actions/workflows/ci.yml/badge.svg)](https://github.com/Codenator81/fit_flow/actions/workflows/ci.yml)
+[![Docs](https://github.com/Codenator81/fit_flow/actions/workflows/docs.yml/badge.svg)](https://codenator81.github.io/fit_flow/)
 
-## Tech Stack
+An offline-first workout tracker built with Flutter and Firebase. Plan a training program of days and rest days, run each day set by set with a rest timer, and keep your history in sync across devices, even without signal.
 
-### Backend & Database
-- **Firebase** - All-in-one backend solution (100% free on Spark plan)
-  - **cloud_firestore** - NoSQL database with automatic offline persistence
-  - **firebase_auth** - Authentication (email, Google, Apple, etc.)
-  - **firebase_core** - Core Firebase SDK
-  - ~~firebase_storage~~ - Not included (requires Blaze plan)
+**Documentation site: https://codenator81.github.io/fit_flow/**
 
-### State Management
-- **flutter_bloc** - Business logic component pattern
-- **equatable** - Value equality for state objects
-
-### Dependency Injection
-- **get_it** - Service locator for dependency injection
-
-### Networking
-- **dio** - Powerful HTTP client
-- **pretty_dio_logger** - HTTP request/response logging
-
-### Functional Programming
-- **dartz** - Functional programming utilities (Either, Option, etc.)
-
-### Code Generation
-- **freezed** + **freezed_annotation** - Immutable classes & unions
-- **json_serializable** + **json_annotation** - JSON serialization
-- **build_runner** - Code generation build system
-
-### Routing
-- **go_router** - Declarative routing with deep linking
-
-### Internationalization
-- **intl** - Date/time formatting and i18n
-
-### UI Enhancements
-- **google_fonts** - Custom typography (Montserrat, Roboto, etc.)
-- **flutter_animate** - Smooth animations and transitions
-- **fl_chart** - Beautiful charts for progress tracking
-
-## Project Architecture
-
-```
-lib/
-├── core/           # Core utilities, constants, errors
-├── features/       # Feature modules
-│   ├── auth/
-│   ├── workouts/
-│   ├── exercises/
-│   └── profile/
-└── main.dart
-```
+<p>
+  <img src="test/goldens/screens/login_page.png" width="160" alt="Login">
+  <img src="test/goldens/screens/home.png" width="160" alt="Home">
+  <img src="test/goldens/screens/workout_detail.png" width="160" alt="Program">
+  <img src="test/goldens/screens/active_day.png" width="160" alt="Active day">
+  <img src="test/goldens/screens/settings.png" width="160" alt="Settings">
+</p>
 
 ## Features
 
-- ✅ Offline-first architecture
-- ✅ Real-time data synchronization
-- ✅ Custom workout workflows
-- ✅ User authentication
-- ✅ Progress tracking
-- ✅ Cloud backup with Firebase
+- Google sign-in; each user sees only their own data.
+- Workout programs made of training days and rest days, with exercises (sets, reps, rest time).
+- Day-by-day flow: finish a day and the next one becomes active; start the cycle over at any time.
+- Per-set tracking with editable reps, a vibrating rest timer, and the last five results per exercise.
+- Works offline: Cloud Firestore persistence with unlimited cache.
 
-## Getting Started
+## Quick start
 
-1. Install dependencies:
-   ```bash
-   flutter pub get
-   ```
+```bash
+flutter pub get
+flutter run
+```
 
-2. Set up Firebase:
-   - Create a project at [console.firebase.google.com](https://console.firebase.google.com)
-   - Enable **Firestore Database** (Native mode, Test mode for development)
-   - Enable **Authentication** → Email/Password provider
-   - Download and add config files:
-     - Android: `google-services.json` → `android/app/`
+Requires Flutter 3.47.7 and an Android device or emulator. Google sign-in needs your debug key's SHA-1/SHA-256 registered in Firebase; see [Firebase](docs/architecture/firebase.md).
 
-3. Run the app:
-   ```bash
-   flutter run
-   ```
+Before pushing:
+
+```bash
+dart format . && flutter analyze --fatal-infos && flutter test
+```
+
+## Documentation
+
+| Page | What's inside |
+|---|---|
+| [Product spec](docs/product/index.md) | Purpose, users, user stories, features, requirements |
+| [Screens](docs/product/screens.md) | Every screen with its screenshot |
+| [Roadmap](docs/product/roadmap.md) | What's planned next |
+| [Architecture](docs/architecture/index.md) | Layers, data flow, dependency injection, code generation |
+| [Data model](docs/architecture/data-model.md) | Workout, day, exercise and the Firestore document |
+| [Firebase](docs/architecture/firebase.md) | Project, rules, index, Google sign-in setup |
+| [Decisions](docs/architecture/decisions.md) | Architecture decision records |
+| [Getting started](docs/development/index.md) | Setup and everyday commands |
+| [Testing](docs/development/testing.md) | Unit, golden and emulator tests |
+| [CI & quality](docs/development/ci.md) | Workflows, PR comments, branch protection |
+| [Contributing](docs/development/contributing.md) | Issue → branch → PR → merge |
+| [Changelog](docs/changelog.md) | What changed and when |
+
+The site is built from `docs/` with [MkDocs Material](https://squidfunk.github.io/mkdocs-material/) and deployed to GitHub Pages on every merge to `master`.
+
+## Tech stack
+
+Flutter · flutter_bloc · Freezed + json_serializable · get_it · dartz · Firebase Auth · Cloud Firestore · google_fonts · vibration

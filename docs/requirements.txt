@@ -1,0 +1,4 @@
+# Python packages for building the documentation site (mkdocs.yml).
+# Install: pip install -r docs/requirements.txt
+mkdocs==1.6.1
+mkdocs-material==9.7.7
