@@ -46,3 +46,6 @@ app.*.map.json
 
 # Golden test diffs written on mismatch
 test/**/failures/
+
+# MkDocs output (mkdocs build)
+/site/

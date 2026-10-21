@@ -10,3 +10,9 @@ updates:
     directory: /
     schedule:
       interval: weekly
+
+  # Python packages for the documentation site (docs/requirements.txt).
+  - package-ecosystem: pip
+    directory: /docs
+    schedule:
+      interval: weekly
