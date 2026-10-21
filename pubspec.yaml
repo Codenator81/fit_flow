@@ -19,7 +19,7 @@ dependencies:
   flutter:
     sdk: flutter
   freezed_annotation: ^3.1.0
-  google_sign_in: ^6.2.2
+  google_sign_in: ^7.2.0
   flutter_animate: ^4.5.0
   flutter_bloc: ^9.1.1
   get_it: ^9.2.0
