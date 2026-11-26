@@ -3,10 +3,9 @@ import 'package:flutter_test/flutter_test.dart';
 
 void main() {
   group('Exercise', () {
-    test('defaults restSeconds to 60 and history to empty', () {
+    test('defaults history to empty', () {
       const exercise = Exercise(id: 'e1', name: 'Squat', sets: 3, reps: 10);
 
-      expect(exercise.restSeconds, 60);
       expect(exercise.history, isEmpty);
     });
 
@@ -21,10 +20,9 @@ void main() {
     test('copyWith changes only the given fields', () {
       const exercise = Exercise(id: 'e1', name: 'Squat', sets: 3, reps: 10);
 
-      final updated = exercise.copyWith(reps: 12, restSeconds: 90);
+      final updated = exercise.copyWith(reps: 12);
 
       expect(updated.reps, 12);
-      expect(updated.restSeconds, 90);
       expect(updated.sets, 3);
       expect(updated.name, 'Squat');
       expect(exercise.reps, 10);

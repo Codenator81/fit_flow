@@ -12,6 +12,7 @@ ExerciseCompletionModel _$ExerciseCompletionModelFromJson(
   date: DateTime.parse(json['date'] as String),
   maxSets: (json['maxSets'] as num).toInt(),
   maxReps: (json['maxReps'] as num).toInt(),
+  maxWeight: (json['maxWeight'] as num?)?.toDouble(),
 );
 
 Map<String, dynamic> _$ExerciseCompletionModelToJson(
@@ -20,6 +21,7 @@ Map<String, dynamic> _$ExerciseCompletionModelToJson(
   'date': instance.date.toIso8601String(),
   'maxSets': instance.maxSets,
   'maxReps': instance.maxReps,
+  'maxWeight': ?instance.maxWeight,
 };
 
 ExerciseModel _$ExerciseModelFromJson(Map<String, dynamic> json) =>
@@ -28,7 +30,8 @@ ExerciseModel _$ExerciseModelFromJson(Map<String, dynamic> json) =>
       name: json['name'] as String,
       sets: (json['sets'] as num).toInt(),
       reps: (json['reps'] as num).toInt(),
-      restSeconds: (json['restSeconds'] as num?)?.toInt() ?? 60,
+      tracksWeight: json['tracksWeight'] as bool? ?? false,
+      targetWeight: (json['targetWeight'] as num?)?.toDouble(),
       history:
           (json['history'] as List<dynamic>?)
               ?.map(
@@ -45,6 +48,7 @@ Map<String, dynamic> _$ExerciseModelToJson(ExerciseModel instance) =>
       'name': instance.name,
       'sets': instance.sets,
       'reps': instance.reps,
-      'restSeconds': instance.restSeconds,
+      'tracksWeight': instance.tracksWeight,
+      'targetWeight': ?instance.targetWeight,
       'history': instance.history,
     };

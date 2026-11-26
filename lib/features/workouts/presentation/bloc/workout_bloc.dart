@@ -113,7 +113,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       event.exerciseName,
       event.sets,
       event.reps,
-      event.restSeconds,
+      tracksWeight: event.tracksWeight,
     );
 
     result.fold((failure) => emit(WorkoutState.error(failure.message)), (_) {

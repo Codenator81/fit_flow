@@ -28,13 +28,15 @@ classDiagram
     String name
     int sets
     int reps
-    int restSeconds = 60
+    bool tracksWeight = false
+    double? targetWeight
     List~ExerciseCompletion~ history
   }
   class ExerciseCompletion {
     DateTime date
     int maxSets
     int maxReps
+    double? maxWeight
   }
   Workout "1" *-- "many" WorkoutDay
   WorkoutDay "1" *-- "many" Exercise
@@ -71,9 +73,10 @@ Collection `workouts`, one document per program, auto-generated id. Dates are st
           "name": "Deadlift",
           "sets": 3,
           "reps": 5,
-          "restSeconds": 90,
+          "tracksWeight": true,
+          "targetWeight": 100,
           "history": [
-            { "date": "2026-10-01T00:00:00.000Z", "maxSets": 3, "maxReps": 5 }
+            { "date": "2026-10-01T00:00:00.000Z", "maxSets": 3, "maxReps": 5, "maxWeight": 100 }
           ]
         }
       ]

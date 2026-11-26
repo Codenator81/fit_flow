@@ -59,4 +59,4 @@ The site is built from `docs/` with [MkDocs Material](https://squidfunk.github.i
 
 ## Tech stack
 
-Flutter · flutter_bloc · Freezed + json_serializable · get_it · dartz · Firebase Auth · Cloud Firestore · google_fonts · vibration
+Flutter · flutter_bloc · Freezed + json_serializable · get_it · dartz · Firebase Auth · Cloud Firestore · google_fonts

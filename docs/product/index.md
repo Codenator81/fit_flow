@@ -7,7 +7,7 @@ FitFlow is a mobile workout tracker for people who follow a repeating training p
 ## Target users
 
 - **Gym-goers on a split program** who repeat the same cycle of days and want to see what they lifted last time.
-- **Home and calisthenics trainees** who need a simple rest timer and a record of reps.
+- **Home and calisthenics trainees** who need a simple record of reps.
 - **People training without reliable signal** (basement gyms), so the app must work offline.
 
 ## User stories
@@ -19,7 +19,7 @@ FitFlow is a mobile workout tracker for people who follow a repeating training p
 | U3 | add training days and rest days to a program | the program matches my weekly split | <span class="ff-badge ff-badge--done">Done</span> |
 | U4 | add exercises with target sets, reps and rest seconds to a day | I know what to do on that day | <span class="ff-badge ff-badge--done">Done</span> |
 | U5 | see which day is active and start it from Home | I don't have to remember where I stopped | <span class="ff-badge ff-badge--done">Done</span> |
-| U6 | tick off sets, edit the reps I actually did and start a rest timer | I stay focused during the session | <span class="ff-badge ff-badge--done">Done</span> |
+| U6 | tick off sets, edit the reps (and weight) I actually did and update the target | I stay focused during the session | <span class="ff-badge ff-badge--done">Done</span> |
 | U7 | complete a day and have the next one become active | the program advances automatically | <span class="ff-badge ff-badge--done">Done</span> |
 | U8 | see my last five results for an exercise | I know what to beat today | <span class="ff-badge ff-badge--done">Done</span> |
 | U9 | start a program over, or jump to a specific day | I can restart a cycle or skip ahead | <span class="ff-badge ff-badge--done">Done</span> |
@@ -33,7 +33,7 @@ FitFlow is a mobile workout tracker for people who follow a repeating training p
 
     - Create and delete workout programs.
     - Add training days or rest days; days are numbered in order and renumbered after a delete.
-    - Add exercises to a day: name, target sets, target reps, rest time in seconds (default 60 s).
+    - Add exercises to a day: name, target sets, target reps and a **Track weight** option (kg per set).
     - Edit a program on its own screen (add/delete days and exercises).
 
 === "Training session"
@@ -41,9 +41,10 @@ FitFlow is a mobile workout tracker for people who follow a repeating training p
     - Home shows the current program and a **START WORKOUT** button.
     - The program screen lists days with their state: completed, active, rest or upcoming.
     - The active day screen pre-fills every set with the target reps; each set has a checkbox and editable reps; sets can be added (**Add Set**) or removed.
+    - Each set row shows the set number, a reps stepper and, for weighted exercises, the weight in kg (tap to enter; pre-filled from the target weight or the last session). Column titles SET / REPS / KG sit above the rows. **Add Set** copies the reps and weight of the last set.
     - Ticking all sets completes the exercise; a switch completes or reopens all sets at once.
-    - The rest timer counts down the exercise's rest time, warns with three short vibrations, and ends with a long one.
-    - **Finish Day** saves the sets and reps done for each exercise into its history (last five kept), marks the day complete and activates the next unfinished day.
+    - When a finished exercise differs from its target (sets done, lowest reps, heaviest weight), a **New target?** dialog suggests the new target with − / + for sets, reps and kg (2.5 kg steps); **Update** shows it as *Next time* and saves it with Finish Day, **Keep** leaves the target as it is.
+    - **Finish Day** saves the sets, reps and heaviest weight done for each exercise into its history (last five kept), marks the day complete and activates the next unfinished day.
     - Rest days are marked complete with one tap.
 
 === "Account and data"

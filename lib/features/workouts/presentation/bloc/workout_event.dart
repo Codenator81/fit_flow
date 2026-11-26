@@ -1,5 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
+import '../../domain/entities/exercise.dart';
+
 part 'workout_event.freezed.dart';
 
 @freezed
@@ -30,13 +32,13 @@ sealed class WorkoutEvent with _$WorkoutEvent {
     required String exerciseName,
     required int sets,
     required int reps,
-    required int restSeconds,
+    @Default(false) bool tracksWeight,
   }) = AddExercise;
 
   const factory WorkoutEvent.completeDay({
     required String workoutId,
     required String dayId,
-    required Map<String, Map<String, int>> exerciseProgress,
+    required Map<String, ExerciseResult> exerciseProgress,
   }) = CompleteDay;
 
   const factory WorkoutEvent.markRestDayComplete({

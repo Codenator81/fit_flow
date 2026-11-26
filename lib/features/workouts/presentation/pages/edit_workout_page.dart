@@ -5,6 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/workout_day.dart';
+import '../widgets/track_weight_checkbox.dart';
 import '../bloc/workout_bloc.dart';
 import '../bloc/workout_event.dart';
 import '../bloc/workout_state.dart';
@@ -368,7 +369,7 @@ class EditWorkoutPage extends StatelessWidget {
     final nameController = TextEditingController();
     final setsController = TextEditingController();
     final repsController = TextEditingController();
-    final restSecondsController = TextEditingController(text: '60');
+    final trackWeight = ValueNotifier<bool>(false);
     final formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -467,37 +468,8 @@ class EditWorkoutPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: restSecondsController,
-                keyboardType: TextInputType.number,
-                style: AppTextStyles.bodyLarge,
-                decoration: InputDecoration(
-                  labelText: 'Rest Time (seconds)',
-                  hintText: 'Default: 60 seconds',
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                  prefixIcon: const Icon(Icons.timer, color: AppColors.primary),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) return 'Required';
-                  final seconds = int.tryParse(value);
-                  if (seconds == null) return 'Invalid';
-                  if (seconds <= 0) return 'Must be > 0';
-                  return null;
-                },
-              ),
+              const SizedBox(height: 8),
+              TrackWeightCheckbox(value: trackWeight),
             ],
           ),
         ),
@@ -519,7 +491,7 @@ class EditWorkoutPage extends StatelessWidget {
                 final exerciseName = nameController.text.trim();
                 final sets = int.parse(setsController.text);
                 final reps = int.parse(repsController.text);
-                final restSeconds = int.parse(restSecondsController.text);
+                final tracksWeight = trackWeight.value;
                 final bloc = context.read<WorkoutBloc>();
 
                 Navigator.pop(dialogContext);
@@ -533,7 +505,7 @@ class EditWorkoutPage extends StatelessWidget {
                       exerciseName: exerciseName,
                       sets: sets,
                       reps: reps,
-                      restSeconds: restSeconds,
+                      tracksWeight: tracksWeight,
                     ),
                   );
                 });

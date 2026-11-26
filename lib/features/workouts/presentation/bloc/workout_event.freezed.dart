@@ -147,7 +147,7 @@ return setActiveDay(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadWorkouts,TResult Function( String name)?  createWorkout,TResult Function( String workoutId)?  deleteWorkout,TResult Function( String workoutId)?  loadWorkoutDetail,TResult Function( String workoutId,  String dayName,  bool isRestDay)?  addDay,TResult Function( String workoutId,  String dayId)?  deleteDay,TResult Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  int restSeconds)?  addExercise,TResult Function( String workoutId,  String dayId,  Map<String, Map<String, int>> exerciseProgress)?  completeDay,TResult Function( String workoutId,  String dayId)?  markRestDayComplete,TResult Function( String workoutId)?  resetWorkout,TResult Function( String workoutId,  String dayId)?  setActiveDay,required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  loadWorkouts,TResult Function( String name)?  createWorkout,TResult Function( String workoutId)?  deleteWorkout,TResult Function( String workoutId)?  loadWorkoutDetail,TResult Function( String workoutId,  String dayName,  bool isRestDay)?  addDay,TResult Function( String workoutId,  String dayId)?  deleteDay,TResult Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  bool tracksWeight)?  addExercise,TResult Function( String workoutId,  String dayId,  Map<String, ExerciseResult> exerciseProgress)?  completeDay,TResult Function( String workoutId,  String dayId)?  markRestDayComplete,TResult Function( String workoutId)?  resetWorkout,TResult Function( String workoutId,  String dayId)?  setActiveDay,required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case LoadWorkouts() when loadWorkouts != null:
 return loadWorkouts();case CreateWorkout() when createWorkout != null:
@@ -156,7 +156,7 @@ return deleteWorkout(_that.workoutId);case LoadWorkoutDetail() when loadWorkoutD
 return loadWorkoutDetail(_that.workoutId);case AddDay() when addDay != null:
 return addDay(_that.workoutId,_that.dayName,_that.isRestDay);case DeleteDay() when deleteDay != null:
 return deleteDay(_that.workoutId,_that.dayId);case AddExercise() when addExercise != null:
-return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.restSeconds);case CompleteDay() when completeDay != null:
+return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.tracksWeight);case CompleteDay() when completeDay != null:
 return completeDay(_that.workoutId,_that.dayId,_that.exerciseProgress);case MarkRestDayComplete() when markRestDayComplete != null:
 return markRestDayComplete(_that.workoutId,_that.dayId);case ResetWorkout() when resetWorkout != null:
 return resetWorkout(_that.workoutId);case SetActiveDay() when setActiveDay != null:
@@ -178,7 +178,7 @@ return setActiveDay(_that.workoutId,_that.dayId);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadWorkouts,required TResult Function( String name)  createWorkout,required TResult Function( String workoutId)  deleteWorkout,required TResult Function( String workoutId)  loadWorkoutDetail,required TResult Function( String workoutId,  String dayName,  bool isRestDay)  addDay,required TResult Function( String workoutId,  String dayId)  deleteDay,required TResult Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  int restSeconds)  addExercise,required TResult Function( String workoutId,  String dayId,  Map<String, Map<String, int>> exerciseProgress)  completeDay,required TResult Function( String workoutId,  String dayId)  markRestDayComplete,required TResult Function( String workoutId)  resetWorkout,required TResult Function( String workoutId,  String dayId)  setActiveDay,}) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  loadWorkouts,required TResult Function( String name)  createWorkout,required TResult Function( String workoutId)  deleteWorkout,required TResult Function( String workoutId)  loadWorkoutDetail,required TResult Function( String workoutId,  String dayName,  bool isRestDay)  addDay,required TResult Function( String workoutId,  String dayId)  deleteDay,required TResult Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  bool tracksWeight)  addExercise,required TResult Function( String workoutId,  String dayId,  Map<String, ExerciseResult> exerciseProgress)  completeDay,required TResult Function( String workoutId,  String dayId)  markRestDayComplete,required TResult Function( String workoutId)  resetWorkout,required TResult Function( String workoutId,  String dayId)  setActiveDay,}) {final _that = this;
 switch (_that) {
 case LoadWorkouts():
 return loadWorkouts();case CreateWorkout():
@@ -187,7 +187,7 @@ return deleteWorkout(_that.workoutId);case LoadWorkoutDetail():
 return loadWorkoutDetail(_that.workoutId);case AddDay():
 return addDay(_that.workoutId,_that.dayName,_that.isRestDay);case DeleteDay():
 return deleteDay(_that.workoutId,_that.dayId);case AddExercise():
-return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.restSeconds);case CompleteDay():
+return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.tracksWeight);case CompleteDay():
 return completeDay(_that.workoutId,_that.dayId,_that.exerciseProgress);case MarkRestDayComplete():
 return markRestDayComplete(_that.workoutId,_that.dayId);case ResetWorkout():
 return resetWorkout(_that.workoutId);case SetActiveDay():
@@ -205,7 +205,7 @@ return setActiveDay(_that.workoutId,_that.dayId);}
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadWorkouts,TResult? Function( String name)?  createWorkout,TResult? Function( String workoutId)?  deleteWorkout,TResult? Function( String workoutId)?  loadWorkoutDetail,TResult? Function( String workoutId,  String dayName,  bool isRestDay)?  addDay,TResult? Function( String workoutId,  String dayId)?  deleteDay,TResult? Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  int restSeconds)?  addExercise,TResult? Function( String workoutId,  String dayId,  Map<String, Map<String, int>> exerciseProgress)?  completeDay,TResult? Function( String workoutId,  String dayId)?  markRestDayComplete,TResult? Function( String workoutId)?  resetWorkout,TResult? Function( String workoutId,  String dayId)?  setActiveDay,}) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  loadWorkouts,TResult? Function( String name)?  createWorkout,TResult? Function( String workoutId)?  deleteWorkout,TResult? Function( String workoutId)?  loadWorkoutDetail,TResult? Function( String workoutId,  String dayName,  bool isRestDay)?  addDay,TResult? Function( String workoutId,  String dayId)?  deleteDay,TResult? Function( String workoutId,  String dayId,  String exerciseName,  int sets,  int reps,  bool tracksWeight)?  addExercise,TResult? Function( String workoutId,  String dayId,  Map<String, ExerciseResult> exerciseProgress)?  completeDay,TResult? Function( String workoutId,  String dayId)?  markRestDayComplete,TResult? Function( String workoutId)?  resetWorkout,TResult? Function( String workoutId,  String dayId)?  setActiveDay,}) {final _that = this;
 switch (_that) {
 case LoadWorkouts() when loadWorkouts != null:
 return loadWorkouts();case CreateWorkout() when createWorkout != null:
@@ -214,7 +214,7 @@ return deleteWorkout(_that.workoutId);case LoadWorkoutDetail() when loadWorkoutD
 return loadWorkoutDetail(_that.workoutId);case AddDay() when addDay != null:
 return addDay(_that.workoutId,_that.dayName,_that.isRestDay);case DeleteDay() when deleteDay != null:
 return deleteDay(_that.workoutId,_that.dayId);case AddExercise() when addExercise != null:
-return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.restSeconds);case CompleteDay() when completeDay != null:
+return addExercise(_that.workoutId,_that.dayId,_that.exerciseName,_that.sets,_that.reps,_that.tracksWeight);case CompleteDay() when completeDay != null:
 return completeDay(_that.workoutId,_that.dayId,_that.exerciseProgress);case MarkRestDayComplete() when markRestDayComplete != null:
 return markRestDayComplete(_that.workoutId,_that.dayId);case ResetWorkout() when resetWorkout != null:
 return resetWorkout(_that.workoutId);case SetActiveDay() when setActiveDay != null:
@@ -608,7 +608,7 @@ as String,
 
 
 class AddExercise implements WorkoutEvent {
-  const AddExercise({required this.workoutId, required this.dayId, required this.exerciseName, required this.sets, required this.reps, required this.restSeconds});
+  const AddExercise({required this.workoutId, required this.dayId, required this.exerciseName, required this.sets, required this.reps, this.tracksWeight = false});
   
 
  final  String workoutId;
@@ -616,7 +616,7 @@ class AddExercise implements WorkoutEvent {
  final  String exerciseName;
  final  int sets;
  final  int reps;
- final  int restSeconds;
+@JsonKey() final  bool tracksWeight;
 
 /// Create a copy of WorkoutEvent
 /// with the given fields replaced by the non-null parameter values.
@@ -628,18 +628,18 @@ $AddExerciseCopyWith<AddExercise> get copyWith => _$AddExerciseCopyWithImpl<AddE
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExercise&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExercise&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.tracksWeight, tracksWeight) || other.tracksWeight == tracksWeight));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,workoutId,dayId,exerciseName,sets,reps,restSeconds);
+    return Object.hash(runtimeType,workoutId,dayId,exerciseName,sets,reps,tracksWeight);
 }
 
 @override
 String toString() {
-    return 'WorkoutEvent.addExercise(workoutId: $workoutId, dayId: $dayId, exerciseName: $exerciseName, sets: $sets, reps: $reps, restSeconds: $restSeconds)';
+    return 'WorkoutEvent.addExercise(workoutId: $workoutId, dayId: $dayId, exerciseName: $exerciseName, sets: $sets, reps: $reps, tracksWeight: $tracksWeight)';
 }
 
 
@@ -650,7 +650,7 @@ abstract mixin class $AddExerciseCopyWith<$Res> implements $WorkoutEventCopyWith
   factory $AddExerciseCopyWith(AddExercise value, $Res Function(AddExercise) _then) = _$AddExerciseCopyWithImpl;
 @useResult
 $Res call({
- String workoutId, String dayId, String exerciseName, int sets, int reps, int restSeconds
+ String workoutId, String dayId, String exerciseName, int sets, int reps, bool tracksWeight
 });
 
 
@@ -667,15 +667,15 @@ class _$AddExerciseCopyWithImpl<$Res>
 
 /// Create a copy of WorkoutEvent
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') $Res call({Object? workoutId = null,Object? dayId = null,Object? exerciseName = null,Object? sets = null,Object? reps = null,Object? restSeconds = null,}) {
+@pragma('vm:prefer-inline') $Res call({Object? workoutId = null,Object? dayId = null,Object? exerciseName = null,Object? sets = null,Object? reps = null,Object? tracksWeight = null,}) {
   return _then(AddExercise(
 workoutId: null == workoutId ? _self.workoutId : workoutId // ignore: cast_nullable_to_non_nullable
 as String,dayId: null == dayId ? _self.dayId : dayId // ignore: cast_nullable_to_non_nullable
 as String,exerciseName: null == exerciseName ? _self.exerciseName : exerciseName // ignore: cast_nullable_to_non_nullable
 as String,sets: null == sets ? _self.sets : sets // ignore: cast_nullable_to_non_nullable
 as int,reps: null == reps ? _self.reps : reps // ignore: cast_nullable_to_non_nullable
-as int,restSeconds: null == restSeconds ? _self.restSeconds : restSeconds // ignore: cast_nullable_to_non_nullable
-as int,
+as int,tracksWeight: null == tracksWeight ? _self.tracksWeight : tracksWeight // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -686,13 +686,13 @@ as int,
 
 
 class CompleteDay implements WorkoutEvent {
-  const CompleteDay({required this.workoutId, required this.dayId, required  Map<String, Map<String, int>> exerciseProgress}): _exerciseProgress = exerciseProgress;
+  const CompleteDay({required this.workoutId, required this.dayId, required  Map<String, ExerciseResult> exerciseProgress}): _exerciseProgress = exerciseProgress;
   
 
  final  String workoutId;
  final  String dayId;
- final  Map<String, Map<String, int>> _exerciseProgress;
- Map<String, Map<String, int>> get exerciseProgress {
+ final  Map<String, ExerciseResult> _exerciseProgress;
+ Map<String, ExerciseResult> get exerciseProgress {
   if (_exerciseProgress is EqualUnmodifiableMapView) return _exerciseProgress;
   // ignore: implicit_dynamic_type
   return EqualUnmodifiableMapView(_exerciseProgress);
@@ -731,7 +731,7 @@ abstract mixin class $CompleteDayCopyWith<$Res> implements $WorkoutEventCopyWith
   factory $CompleteDayCopyWith(CompleteDay value, $Res Function(CompleteDay) _then) = _$CompleteDayCopyWithImpl;
 @useResult
 $Res call({
- String workoutId, String dayId, Map<String, Map<String, int>> exerciseProgress
+ String workoutId, String dayId, Map<String, ExerciseResult> exerciseProgress
 });
 
 
@@ -753,7 +753,7 @@ class _$CompleteDayCopyWithImpl<$Res>
 workoutId: null == workoutId ? _self.workoutId : workoutId // ignore: cast_nullable_to_non_nullable
 as String,dayId: null == dayId ? _self.dayId : dayId // ignore: cast_nullable_to_non_nullable
 as String,exerciseProgress: null == exerciseProgress ? _self._exerciseProgress : exerciseProgress // ignore: cast_nullable_to_non_nullable
-as Map<String, Map<String, int>>,
+as Map<String, ExerciseResult>,
   ));
 }
 

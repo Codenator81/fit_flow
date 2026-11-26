@@ -15,6 +15,21 @@ final _day = WorkoutDay(
   isActive: true,
   exercises: [
     Exercise(
+      id: 'deadlift',
+      name: 'Deadlift',
+      sets: 3,
+      reps: 5,
+      tracksWeight: true,
+      history: [
+        ExerciseCompletion(
+          date: DateTime(2026, 10, 9),
+          maxSets: 3,
+          maxReps: 5,
+          maxWeight: 102.5,
+        ),
+      ],
+    ),
+    Exercise(
       id: 'pull-ups',
       name: 'Pull-ups',
       sets: 3,

@@ -3,6 +3,7 @@ import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import '../../../../core/error/failures.dart';
+import '../../domain/entities/exercise.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/repositories/workout_repository.dart';
 import '../models/workout_model.dart';
@@ -179,9 +180,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
     String dayId,
     String exerciseName,
     int sets,
-    int reps,
-    int restSeconds,
-  ) async {
+    int reps, {
+    bool tracksWeight = false,
+  }) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
       if (!doc.exists) {
@@ -201,7 +202,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         'name': exerciseName,
         'sets': sets,
         'reps': reps,
-        'restSeconds': restSeconds,
+        'tracksWeight': tracksWeight,
         'history': [],
       };
 
@@ -228,7 +229,7 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
   Future<Either<Failure, Unit>> completeDay(
     String workoutId,
     String dayId,
-    Map<String, Map<String, int>> exerciseProgress,
+    Map<String, ExerciseResult> exerciseProgress,
   ) async {
     try {
       final doc = await firestore.collection('workouts').doc(workoutId).get();
@@ -260,8 +261,9 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
           // Add new completion to history
           history.insert(0, {
             'date': DateTime.now().toIso8601String(),
-            'maxSets': progress['sets'] ?? 0,
-            'maxReps': progress['reps'] ?? 0,
+            'maxSets': progress.sets,
+            'maxReps': progress.reps,
+            if (progress.maxWeight != null) 'maxWeight': progress.maxWeight,
           });
 
           // Keep only last 5 entries
@@ -270,6 +272,15 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
           }
 
           exercise['history'] = history;
+          if (progress.targetSets != null) {
+            exercise['sets'] = progress.targetSets;
+          }
+          if (progress.targetReps != null) {
+            exercise['reps'] = progress.targetReps;
+          }
+          if (progress.targetWeight != null) {
+            exercise['targetWeight'] = progress.targetWeight;
+          }
         }
       }
 
