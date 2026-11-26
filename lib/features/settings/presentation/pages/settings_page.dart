@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../../workouts/presentation/bloc/workout_bloc.dart';
@@ -406,17 +407,17 @@ class SettingsPage extends StatelessWidget {
                         final result = await sl<AuthRepository>().signOut();
                         if (!context.mounted) return;
                         result.fold(
-                          (failure) =>
-                              ScaffoldMessenger.of(context).showSnackBar(
+                          (failure) => ScaffoldMessenger.of(context)
+                              .showSnackBar(
                                 SnackBar(
                                   content: Text(failure.message),
                                   backgroundColor: AppColors.error,
                                 ),
                               ),
                           // Back to AuthGate, which now shows the login page.
-                          (_) => Navigator.of(
-                            context,
-                          ).popUntil((route) => route.isFirst),
+                          (_) =>
+                              Navigator.of(context)
+                                  .popUntil((route) => route.isFirst),
                         );
                       }
                     },

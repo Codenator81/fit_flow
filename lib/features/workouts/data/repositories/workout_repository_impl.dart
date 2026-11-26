@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/repositories/workout_repository.dart';
@@ -51,10 +52,8 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
         return const Left(ServerFailure('Workout not found'));
       }
 
-      final workout = WorkoutModel.fromJson({
-        'id': doc.id,
-        ...doc.data()!,
-      }).toEntity();
+      final workout = WorkoutModel.fromJson({'id': doc.id, ...doc.data()!})
+          .toEntity();
 
       return Right(workout);
     } on FirebaseException catch (e) {
@@ -77,10 +76,8 @@ class WorkoutRepositoryImpl implements WorkoutRepository {
       };
 
       final docRef = await firestore.collection('workouts').add(workoutData);
-      final workout = WorkoutModel.fromJson({
-        'id': docRef.id,
-        ...workoutData,
-      }).toEntity();
+      final workout = WorkoutModel.fromJson({'id': docRef.id, ...workoutData})
+          .toEntity();
 
       return Right(workout);
     } on FirebaseException catch (e) {

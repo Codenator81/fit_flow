@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import '../../domain/entities/workout.dart';
 
 part 'workout_state.freezed.dart';

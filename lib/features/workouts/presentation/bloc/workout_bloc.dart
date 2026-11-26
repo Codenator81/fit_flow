@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/repositories/workout_repository.dart';
 import 'workout_event.dart';
 import 'workout_state.dart';

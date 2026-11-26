@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/auth_user.dart';
 import '../../domain/repositories/auth_repository.dart';
@@ -33,8 +34,12 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Right(unit);
     } on GoogleSignInException catch (e) {
       // The user closed the Google account picker.
-      if (e.code == GoogleSignInExceptionCode.canceled) return const Right(unit);
-      return const Left(AuthFailure('Google sign-in failed. Please try again.'));
+      if (e.code == GoogleSignInExceptionCode.canceled) {
+        return const Right(unit);
+      }
+      return const Left(
+        AuthFailure('Google sign-in failed. Please try again.'),
+      );
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Authentication failed'));
     } catch (_) {

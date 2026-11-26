@@ -85,9 +85,9 @@ void main() {
 
     test('survives a JSON encode/decode round-trip', () {
       final workout = buildWorkout();
-      final json =
-          jsonDecode(jsonEncode(WorkoutModel.fromEntity(workout).toJson()))
-              as Map<String, dynamic>;
+      final json = jsonDecode(
+        jsonEncode(WorkoutModel.fromEntity(workout).toJson()),
+      ) as Map<String, dynamic>;
 
       expect(WorkoutModel.fromJson(json).toEntity(), workout);
     });
