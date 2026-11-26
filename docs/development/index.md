@@ -9,7 +9,7 @@
 | Java | 17 or newer (CI uses 17) |
 | Firebase CLI | Only to deploy Firestore rules and indexes |
 
-Android is the only platform in the repository. The Gradle setup is Gradle 9.3.1, Android Gradle Plugin 9.1.0 and Kotlin 2.4.0.
+Android is the only platform in the repository. The Gradle setup is Gradle 9.9.2, Android Gradle Plugin 9.5.3 and Kotlin 2.4.21.
 
 ## Run the app
 
