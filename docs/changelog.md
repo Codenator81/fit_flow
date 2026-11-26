@@ -2,6 +2,11 @@
 
 Notable changes, newest first. Each entry links to its pull request.
 
+## 2026-11-26 · Toolchain upgrade
+
+### Changed
+- Flutter 3.50.1 / Dart 3.14 with `material_ui`; all dependencies at their latest majors, google_sign_in 7; Android on Gradle 9.9.2, AGP 9.5.3 and Kotlin 2.4.21 ([#32](https://github.com/Codenator81/fit_flow/pull/32)).
+
 ## 2026-10-16 · Quality foundation
 
 ### Fixed
