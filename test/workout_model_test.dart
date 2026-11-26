@@ -37,7 +37,6 @@ void main() {
       expect(workout.userId, 'user-123');
       expect(workout.days, hasLength(2));
       expect(workout.days.first.exercises.single.name, 'Bench Press');
-      expect(workout.days.first.exercises.single.restSeconds, 60);
       expect(workout.days.last.isRestDay, isTrue);
       expect(workout.createdAt, DateTime(2026, 10, 1, 10));
     });

@@ -1,4 +1,5 @@
 import 'package:fit_flow/core/error/failures.dart';
+import 'package:fit_flow/features/workouts/domain/entities/exercise.dart';
 import 'package:fit_flow/features/workouts/domain/entities/workout.dart';
 import 'package:fit_flow/features/workouts/presentation/bloc/workout_bloc.dart';
 import 'package:fit_flow/features/workouts/presentation/bloc/workout_event.dart';
@@ -133,16 +134,15 @@ void main() {
           exerciseName: 'Squat',
           sets: 3,
           reps: 10,
-          restSeconds: 90,
         ),
-        'addExercise:w1:d1:Squat:3:10:90',
+        'addExercise:w1:d1:Squat:3:10:false',
       ),
       'completeDay': (
         const WorkoutEvent.completeDay(
           workoutId: 'w1',
           dayId: 'd1',
           exerciseProgress: {
-            'e1': {'sets': 3, 'reps': 10},
+            'e1': ExerciseResult(sets: 3, reps: 10, maxWeight: 60),
           },
         ),
         'completeDay:w1:d1:1',

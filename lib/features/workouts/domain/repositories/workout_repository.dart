@@ -1,5 +1,7 @@
 import 'package:dartz/dartz.dart';
+
 import '../../../../core/error/failures.dart';
+import '../entities/exercise.dart';
 import '../entities/workout.dart';
 
 abstract class WorkoutRepository {
@@ -18,14 +20,13 @@ abstract class WorkoutRepository {
     String dayId,
     String exerciseName,
     int sets,
-    int reps,
-    int restSeconds,
-  );
+    int reps, {
+    bool tracksWeight = false,
+  });
   Future<Either<Failure, Unit>> completeDay(
     String workoutId,
     String dayId,
-    Map<String, Map<String, int>>
-    exerciseProgress, // exerciseId -> {sets, reps}
+    Map<String, ExerciseResult> exerciseProgress, // exerciseId -> {sets, reps}
   );
   Future<Either<Failure, Unit>> markRestDayComplete(
     String workoutId,

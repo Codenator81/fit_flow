@@ -30,7 +30,7 @@ flutter pub get
 flutter run
 ```
 
-Requires Flutter 3.47.7 and an Android device or emulator. Google sign-in needs your debug key's SHA-1/SHA-256 registered in Firebase; see [Firebase](docs/architecture/firebase.md).
+Requires Flutter 3.50.1 and an Android device or emulator. Google sign-in needs your debug key's SHA-1/SHA-256 registered in Firebase; see [Firebase](docs/architecture/firebase.md).
 
 Before pushing:
 
@@ -59,4 +59,4 @@ The site is built from `docs/` with [MkDocs Material](https://squidfunk.github.i
 
 ## Tech stack
 
-Flutter · flutter_bloc · Freezed + json_serializable · get_it · dartz · Firebase Auth · Cloud Firestore · google_fonts · vibration
+Flutter · flutter_bloc · Freezed + json_serializable · get_it · dartz · Firebase Auth · Cloud Firestore · google_fonts

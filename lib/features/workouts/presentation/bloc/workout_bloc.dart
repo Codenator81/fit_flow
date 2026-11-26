@@ -1,4 +1,5 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../domain/repositories/workout_repository.dart';
 import 'workout_event.dart';
 import 'workout_state.dart';
@@ -112,7 +113,7 @@ class WorkoutBloc extends Bloc<WorkoutEvent, WorkoutState> {
       event.exerciseName,
       event.sets,
       event.reps,
-      event.restSeconds,
+      tracksWeight: event.tracksWeight,
     );
 
     result.fold((failure) => emit(WorkoutState.error(failure.message)), (_) {

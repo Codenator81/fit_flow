@@ -1,4 +1,5 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
+
 import 'exercise.dart';
 
 part 'workout_day.freezed.dart';

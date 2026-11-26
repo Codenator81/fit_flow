@@ -1,5 +1,6 @@
 import 'package:dartz/dartz.dart';
 import 'package:fit_flow/core/error/failures.dart';
+import 'package:fit_flow/features/workouts/domain/entities/exercise.dart';
 import 'package:fit_flow/features/workouts/domain/entities/workout.dart';
 import 'package:fit_flow/features/workouts/domain/repositories/workout_repository.dart';
 
@@ -68,10 +69,10 @@ class FakeWorkoutRepository implements WorkoutRepository {
     String dayId,
     String exerciseName,
     int sets,
-    int reps,
-    int restSeconds,
-  ) => _result(
-    'addExercise:$workoutId:$dayId:$exerciseName:$sets:$reps:$restSeconds',
+    int reps, {
+    bool tracksWeight = false,
+  }) => _result(
+    'addExercise:$workoutId:$dayId:$exerciseName:$sets:$reps:$tracksWeight',
     unit,
   );
 
@@ -79,7 +80,7 @@ class FakeWorkoutRepository implements WorkoutRepository {
   Future<Either<Failure, Unit>> completeDay(
     String workoutId,
     String dayId,
-    Map<String, Map<String, int>> exerciseProgress,
+    Map<String, ExerciseResult> exerciseProgress,
   ) =>
       _result('completeDay:$workoutId:$dayId:${exerciseProgress.length}', unit);
 

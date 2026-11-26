@@ -42,7 +42,7 @@ void main() {
   });
 
   group('ExerciseModel', () {
-    test('fromJson applies defaults for missing restSeconds and history', () {
+    test('fromJson defaults a missing history to empty', () {
       final model = ExerciseModel.fromJson({
         'id': 'e1',
         'name': 'Squat',
@@ -50,8 +50,54 @@ void main() {
         'reps': 10,
       });
 
-      expect(model.restSeconds, 60);
       expect(model.history, isEmpty);
+      expect(model.tracksWeight, isFalse);
+    });
+
+    test('round-trips tracksWeight and the weight of a completion', () {
+      final entity = Exercise(
+        id: 'e1',
+        name: 'Deadlift',
+        sets: 3,
+        reps: 5,
+        tracksWeight: true,
+        history: [
+          ExerciseCompletion(
+            date: date,
+            maxSets: 3,
+            maxReps: 5,
+            maxWeight: 102.5,
+          ),
+        ],
+      );
+
+      final decoded = ExerciseModel.fromJson(
+        jsonDecode(jsonEncode(ExerciseModel.fromEntity(entity).toJson()))
+            as Map<String, dynamic>,
+      );
+
+      expect(decoded.toEntity(), entity);
+    });
+
+    test('completion without maxWeight (older documents) reads as null', () {
+      final completion = ExerciseCompletionModel.fromJson({
+        'date': '2026-10-01T00:00:00.000Z',
+        'maxSets': 3,
+        'maxReps': 5,
+      });
+
+      expect(completion.maxWeight, isNull);
+    });
+
+    test('completion accepts a whole-number maxWeight', () {
+      final completion = ExerciseCompletionModel.fromJson({
+        'date': '2026-10-01T00:00:00.000Z',
+        'maxSets': 3,
+        'maxReps': 5,
+        'maxWeight': 100,
+      });
+
+      expect(completion.maxWeight, 100.0);
     });
 
     test('fromJson accepts numeric values stored as doubles', () {
@@ -61,12 +107,22 @@ void main() {
         'name': 'Squat',
         'sets': 3.0,
         'reps': 10.0,
-        'restSeconds': 90.0,
       });
 
       expect(model.sets, 3);
       expect(model.reps, 10);
-      expect(model.restSeconds, 90);
+    });
+
+    test('fromJson ignores restSeconds left in older documents', () {
+      final model = ExerciseModel.fromJson({
+        'id': 'e1',
+        'name': 'Squat',
+        'sets': 3,
+        'reps': 10,
+        'restSeconds': 90,
+      });
+
+      expect(model.toJson().containsKey('restSeconds'), isFalse);
     });
 
     test('survives a JSON encode/decode round-trip with history', () {
@@ -75,7 +131,6 @@ void main() {
         name: 'Bench press',
         sets: 4,
         reps: 8,
-        restSeconds: 120,
         history: [ExerciseCompletionModel(date: date, maxSets: 4, maxReps: 9)],
       );
 
@@ -92,7 +147,6 @@ void main() {
         name: 'Deadlift',
         sets: 5,
         reps: 3,
-        restSeconds: 180,
         history: [ExerciseCompletion(date: date, maxSets: 5, maxReps: 3)],
       );
 

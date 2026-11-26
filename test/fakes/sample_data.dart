@@ -10,7 +10,6 @@ Exercise _exercise(String id, String name, int sets, int reps, {int? last}) =>
       name: name,
       sets: sets,
       reps: reps,
-      restSeconds: 90,
       history: [
         if (last != null)
           ExerciseCompletion(date: _date, maxSets: sets, maxReps: last),

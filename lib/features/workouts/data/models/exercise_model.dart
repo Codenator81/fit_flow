@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/entities/exercise.dart';
 
 part 'exercise_model.g.dart';
@@ -8,11 +9,14 @@ class ExerciseCompletionModel {
   final DateTime date;
   final int maxSets;
   final int maxReps;
+  @JsonKey(includeIfNull: false)
+  final double? maxWeight;
 
   const ExerciseCompletionModel({
     required this.date,
     required this.maxSets,
     required this.maxReps,
+    this.maxWeight,
   });
 
   factory ExerciseCompletionModel.fromJson(Map<String, dynamic> json) =>
@@ -21,7 +25,12 @@ class ExerciseCompletionModel {
   Map<String, dynamic> toJson() => _$ExerciseCompletionModelToJson(this);
 
   ExerciseCompletion toEntity() {
-    return ExerciseCompletion(date: date, maxSets: maxSets, maxReps: maxReps);
+    return ExerciseCompletion(
+      date: date,
+      maxSets: maxSets,
+      maxReps: maxReps,
+      maxWeight: maxWeight,
+    );
   }
 
   factory ExerciseCompletionModel.fromEntity(ExerciseCompletion completion) {
@@ -29,6 +38,7 @@ class ExerciseCompletionModel {
       date: completion.date,
       maxSets: completion.maxSets,
       maxReps: completion.maxReps,
+      maxWeight: completion.maxWeight,
     );
   }
 }
@@ -39,7 +49,9 @@ class ExerciseModel {
   final String name;
   final int sets;
   final int reps;
-  final int restSeconds;
+  final bool tracksWeight;
+  @JsonKey(includeIfNull: false)
+  final double? targetWeight;
   final List<ExerciseCompletionModel> history;
 
   const ExerciseModel({
@@ -47,7 +59,8 @@ class ExerciseModel {
     required this.name,
     required this.sets,
     required this.reps,
-    this.restSeconds = 60,
+    this.tracksWeight = false,
+    this.targetWeight,
     this.history = const [],
   });
 
@@ -62,7 +75,8 @@ class ExerciseModel {
       name: name,
       sets: sets,
       reps: reps,
-      restSeconds: restSeconds,
+      tracksWeight: tracksWeight,
+      targetWeight: targetWeight,
       history: history.map((h) => h.toEntity()).toList(),
     );
   }
@@ -73,7 +87,8 @@ class ExerciseModel {
       name: exercise.name,
       sets: exercise.sets,
       reps: exercise.reps,
-      restSeconds: exercise.restSeconds,
+      tracksWeight: exercise.tracksWeight,
+      targetWeight: exercise.targetWeight,
       history: exercise.history
           .map((h) => ExerciseCompletionModel.fromEntity(h))
           .toList(),

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'workout_state.dart';
@@ -9,6 +9,7 @@ part of 'workout_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$WorkoutState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutState);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutState);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'WorkoutState()';
+    return 'WorkoutState()';
 }
 
 
@@ -203,7 +204,7 @@ class WorkoutInitial implements WorkoutState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutInitial);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutInitial);
 }
 
 
@@ -212,7 +213,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'WorkoutState.initial()';
+    return 'WorkoutState.initial()';
 }
 
 
@@ -235,7 +236,7 @@ class WorkoutLoading implements WorkoutState {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutLoading);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutLoading);
 }
 
 
@@ -244,7 +245,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'WorkoutState.loading()';
+    return 'WorkoutState.loading()';
 }
 
 
@@ -257,7 +258,7 @@ String toString() {
 
 
 class WorkoutLoaded implements WorkoutState {
-  const WorkoutLoaded(final  List<Workout> workouts): _workouts = workouts;
+  const WorkoutLoaded( List<Workout> workouts): _workouts = workouts;
   
 
  final  List<Workout> _workouts;
@@ -278,16 +279,18 @@ $WorkoutLoadedCopyWith<WorkoutLoaded> get copyWith => _$WorkoutLoadedCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutLoaded&&const DeepCollectionEquality().equals(other._workouts, _workouts));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutLoaded&&const DeepCollectionEquality().equals(other.workouts, _workouts));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_workouts));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_workouts));
+}
 
 @override
 String toString() {
-  return 'WorkoutState.loaded(workouts: $workouts)';
+    return 'WorkoutState.loaded(workouts: $workouts)';
 }
 
 
@@ -344,16 +347,18 @@ $WorkoutDetailCopyWith<WorkoutDetail> get copyWith => _$WorkoutDetailCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDetail&&(identical(other.workout, workout) || other.workout == workout));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDetail&&(identical(other.workout, workout) || other.workout == workout));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workout);
+int get hashCode {
+    return Object.hash(runtimeType,workout);
+}
 
 @override
 String toString() {
-  return 'WorkoutState.detail(workout: $workout)';
+    return 'WorkoutState.detail(workout: $workout)';
 }
 
 
@@ -419,16 +424,18 @@ $WorkoutErrorCopyWith<WorkoutError> get copyWith => _$WorkoutErrorCopyWithImpl<W
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutError&&(identical(other.message, message) || other.message == message));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutError&&(identical(other.message, message) || other.message == message));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,message);
+int get hashCode {
+    return Object.hash(runtimeType,message);
+}
 
 @override
 String toString() {
-  return 'WorkoutState.error(message: $message)';
+    return 'WorkoutState.error(message: $message)';
 }
 
 

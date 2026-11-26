@@ -2,6 +2,14 @@
 
 Notable changes, newest first. Each entry links to its pull request.
 
+## 2026-11-26 · Toolchain upgrade
+
+### Changed
+- Flutter 3.50.1 / Dart 3.14 with `material_ui`; all dependencies at their latest majors, google_sign_in 7; Android on Gradle 9.9.2, AGP 9.5.3 and Kotlin 2.4.21; the rest timer is removed (button, rest-time field, `restSeconds`, `vibration`) ([#32](https://github.com/Codenator81/fit_flow/pull/32)).
+
+### Added
+- Optional weight per set (**Track weight** when adding an exercise), a **New target?** dialog after finishing an exercise off target (sets, reps, kg), SET / REPS / KG column titles on the active day; **Add Set** copies the last set ([#32](https://github.com/Codenator81/fit_flow/pull/32)).
+
 ## 2026-10-16 · Quality foundation
 
 ### Fixed

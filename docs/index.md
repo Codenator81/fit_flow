@@ -10,7 +10,7 @@ hide:
 
 # FitFlow
 
-<p class="ff-tagline">Plan your training program, run each day set by set with a rest timer, and keep your progress in sync across devices, even offline.</p>
+<p class="ff-tagline">Plan your training program, run each day set by set, and keep your progress in sync across devices, even offline.</p>
 
 [Product spec](product/index.md){ .md-button .md-button--primary }
 [Architecture](architecture/index.md){ .md-button }
@@ -33,7 +33,7 @@ hide:
 </figure>
 <figure markdown>
 ![Active day](assets/screens/active_day.png)
-<figcaption>Active day: sets and rest timer</figcaption>
+<figcaption>Active day: sets</figcaption>
 </figure>
 <figure markdown>
 ![Settings](assets/screens/settings.png)
@@ -49,7 +49,7 @@ hide:
 
     ---
 
-    Build a program out of training days and rest days, add exercises with target sets, reps and rest time.
+    Build a program out of training days and rest days, add exercises with target sets and reps.
 
 -   :material-play-circle:{ .lg .middle } __Day-by-day flow__
 
@@ -57,11 +57,11 @@ hide:
 
     The app always knows which day is next. Finish a day and the next one becomes active; start over at any time.
 
--   :material-timer-outline:{ .lg .middle } __Sets and rest timer__
+-   :material-check-circle-outline:{ .lg .middle } __Set tracking__
 
     ---
 
-    Tick off each set, adjust the reps you actually did, and start a rest timer that vibrates when time is up.
+    Tick off each set and adjust the reps you actually did.
 
 -   :material-chart-line:{ .lg .middle } __Exercise history__
 
@@ -87,7 +87,7 @@ hide:
 
 | Layer | Technology |
 |---|---|
-| App | Flutter 3.47 (Android), Material 3 dark theme, Google Fonts (Montserrat, Roboto, Bebas Neue) |
+| App | Flutter 3.50 (Android), Material 3 dark theme, Google Fonts (Montserrat, Roboto, Bebas Neue) |
 | State | `flutter_bloc` (`WorkoutBloc`) over repository interfaces |
 | Models | Freezed (entities, events, states) and `json_serializable` (Firestore models) |
 | Dependency injection | `get_it` service locator |

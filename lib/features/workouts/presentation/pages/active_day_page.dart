@@ -1,7 +1,6 @@
-import 'dart:async';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:vibration/vibration.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/workout.dart';
@@ -9,6 +8,8 @@ import '../../domain/entities/workout_day.dart';
 import '../../domain/entities/exercise.dart';
 import '../bloc/workout_bloc.dart';
 import '../bloc/workout_event.dart';
+import '../widgets/set_row.dart';
+import '../widgets/target_update_dialog.dart';
 
 class ActiveDayPage extends StatefulWidget {
   final Workout workout;
@@ -29,6 +30,12 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   // Map<exerciseId, List<bool for each set>>
   final Map<String, List<bool>> _setCompleted = {};
 
+  // Weight (kg) of each set, only for exercises that track weight
+  final Map<String, List<double?>> _setWeights = {};
+
+  // New sets × reps targets accepted after finishing an exercise
+  final Map<String, ExerciseTarget> _newTargets = {};
+
   // Track manual completion status for each exercise
   final Map<String, bool> _exerciseCompleted = {};
 
@@ -42,19 +49,66 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         (_) => exercise.reps,
       );
       _setCompleted[exercise.id] = List.generate(exercise.sets, (_) => false);
+      // Start from the target weight, else the heaviest of the last session.
+      final lastWeight =
+          exercise.targetWeight ??
+          (exercise.history.isEmpty ? null : exercise.history.first.maxWeight);
+      _setWeights[exercise.id] = List.generate(
+        exercise.sets,
+        (_) => lastWeight,
+      );
       _exerciseCompleted[exercise.id] = false;
     }
   }
 
-  void _checkExerciseCompletion(String exerciseId) {
+  void _checkExerciseCompletion(Exercise exercise) {
     // Auto-complete exercise if all sets are complete
-    final allSetsComplete =
-        _setCompleted[exerciseId]?.every((completed) => completed) ?? false;
-    if (allSetsComplete && (_setCompleted[exerciseId]?.isNotEmpty ?? false)) {
-      setState(() {
-        _exerciseCompleted[exerciseId] = true;
-      });
-    }
+    final sets = _setCompleted[exercise.id] ?? const <bool>[];
+    final wasCompleted = _exerciseCompleted[exercise.id] ?? false;
+    if (wasCompleted || sets.isEmpty || !sets.every((done) => done)) return;
+    setState(() => _exerciseCompleted[exercise.id] = true);
+    _offerTargetUpdate(exercise);
+  }
+
+  /// After an exercise is finished with other sets or reps than its target,
+  /// offers to change the target for the next session.
+  Future<void> _offerTargetUpdate(Exercise exercise) async {
+    final reps = _setReps[exercise.id] ?? const <int>[];
+    if (reps.isEmpty) return;
+    final weighted = exercise.tracksWeight;
+    final current = ExerciseTarget(
+      exercise.sets,
+      exercise.reps,
+      weighted ? exercise.targetWeight : null,
+    );
+    final done = ExerciseTarget.suggestFrom(
+      reps,
+      weighted ? _setWeights[exercise.id]! : const [],
+    );
+    final suggested = ExerciseTarget(
+      done.sets,
+      done.reps,
+      done.weight ?? current.weight,
+    );
+    if (suggested.sameAs(current)) return;
+    final chosen = await showDialog<ExerciseTarget>(
+      context: context,
+      builder: (_) => TargetUpdateDialog(
+        exerciseName: exercise.name,
+        current: current,
+        suggested: suggested,
+        doneReps: List.of(reps),
+        showWeight: weighted,
+      ),
+    );
+    if (!mounted) return;
+    setState(() {
+      if (chosen == null || chosen.sameAs(current)) {
+        _newTargets.remove(exercise.id);
+      } else {
+        _newTargets[exercise.id] = chosen;
+      }
+    });
   }
 
   @override
@@ -252,7 +306,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Exercise Header with Timer and Completion Switch
+            // Exercise Header with Completion Switch
             Row(
               children: [
                 Expanded(
@@ -269,32 +323,21 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                       ),
                       const SizedBox(height: 4),
                       Text(
-                        'Target: ${exercise.sets} sets × ${exercise.reps} reps',
+                        'Target: ${ExerciseTarget(exercise.sets, exercise.reps, exercise.targetWeight)}',
                         style: AppTextStyles.bodySmall.copyWith(
                           color: AppColors.textSecondary,
                         ),
                       ),
+                      if (_newTargets[exercise.id] case final next?)
+                        Text(
+                          'Next time: $next',
+                          style: AppTextStyles.bodySmall.copyWith(
+                            color: AppColors.primary,
+                          ),
+                        ),
                     ],
                   ),
                 ),
-                // Rest Timer Button
-                Container(
-                  decoration: BoxDecoration(
-                    color: AppColors.primary.withValues(alpha: 0.1),
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(
-                      color: AppColors.primary.withValues(alpha: 0.3),
-                      width: 1.5,
-                    ),
-                  ),
-                  child: IconButton(
-                    onPressed: () => _startRestTimer(context, exercise),
-                    icon: const Icon(Icons.timer),
-                    color: AppColors.primary,
-                    tooltip: 'Start Rest Timer (${exercise.restSeconds}s)',
-                  ),
-                ),
-                const SizedBox(width: 8),
                 // Completion Switch
                 Transform.scale(
                   scale: 1.2,
@@ -311,6 +354,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                           );
                         }
                       });
+                      if (value) _offerTargetUpdate(exercise);
                     },
                     activeThumbColor: AppColors.success,
                     activeTrackColor: AppColors.success.withValues(alpha: 0.5),
@@ -325,6 +369,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
             const SizedBox(height: 16),
 
             // Sets List
+            SetRowHeader(showWeight: exercise.tracksWeight),
             ...List.generate(sets.length, (index) {
               return _buildSetRow(exercise, index);
             }),
@@ -336,8 +381,12 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
               child: OutlinedButton.icon(
                 onPressed: () {
                   setState(() {
-                    _setReps[exercise.id]!.add(exercise.reps);
+                    // A new set starts from the last set's reps and weight.
+                    final reps = _setReps[exercise.id]!;
+                    final weights = _setWeights[exercise.id]!;
+                    reps.add(reps.isEmpty ? exercise.reps : reps.last);
                     _setCompleted[exercise.id]!.add(false);
+                    weights.add(weights.isEmpty ? null : weights.last);
                   });
                 },
                 style: OutlinedButton.styleFrom(
@@ -379,174 +428,39 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
   }
 
   Widget _buildSetRow(Exercise exercise, int setIndex) {
-    final isSetCompleted = _setCompleted[exercise.id]![setIndex];
-
-    return Container(
-      margin: const EdgeInsets.only(bottom: 8),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: isSetCompleted
-            ? AppColors.success.withValues(alpha: 0.15)
-            : AppColors.background.withValues(alpha: 0.5),
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: isSetCompleted
-              ? AppColors.success
-              : AppColors.primary.withValues(alpha: 0.2),
-          width: isSetCompleted ? 2 : 1,
-        ),
-      ),
-      child: Row(
-        children: [
-          // Completion Checkbox
-          Transform.scale(
-            scale: 1.1,
-            child: Checkbox(
-              value: isSetCompleted,
-              onChanged: (value) {
-                setState(() {
-                  _setCompleted[exercise.id]![setIndex] = value ?? false;
-                  _checkExerciseCompletion(exercise.id);
-                });
-              },
-              // Drop the 48 dp tap padding so the row fits narrow phones.
-              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-              visualDensity: VisualDensity.compact,
-              activeColor: AppColors.success,
-              checkColor: Colors.white,
-              side: BorderSide(
-                color: AppColors.primary.withValues(alpha: 0.5),
-                width: 2,
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Set Number
-          Container(
-            width: 36,
-            height: 36,
-            decoration: BoxDecoration(
-              color: isSetCompleted
-                  ? AppColors.success.withValues(alpha: 0.2)
-                  : AppColors.primary.withValues(alpha: 0.2),
-              borderRadius: BorderRadius.circular(8),
-              border: Border.all(
-                color: isSetCompleted ? AppColors.success : AppColors.primary,
-                width: 1,
-              ),
-            ),
-            child: Center(
-              child: Text(
-                '${setIndex + 1}',
-                style: AppTextStyles.h3.copyWith(
-                  color: isSetCompleted ? AppColors.success : AppColors.primary,
-                  fontSize: 14,
-                ),
-              ),
-            ),
-          ),
-          const SizedBox(width: 8),
-
-          // Reps Controls with Label Below. They take the remaining width and
-          // scale down on very narrow screens instead of overflowing (#16).
-          Expanded(
-            child: Align(
-              alignment: Alignment.centerRight,
-              child: FittedBox(
-                fit: BoxFit.scaleDown,
-                child: _buildRepsControls(exercise, setIndex, isSetCompleted),
-              ),
-            ),
-          ),
-          const SizedBox(width: 4),
-
-          // Delete Set Button
-          IconButton(
-            onPressed: () {
-              setState(() {
-                _setReps[exercise.id]!.removeAt(setIndex);
-                _setCompleted[exercise.id]!.removeAt(setIndex);
-              });
-            },
-            icon: const Icon(Icons.delete_outline),
-            color: AppColors.textTertiary,
-            iconSize: 20,
-            visualDensity: VisualDensity.compact,
-          ),
-        ],
-      ),
+    return SetRow(
+      setNumber: setIndex + 1,
+      reps: _setReps[exercise.id]![setIndex],
+      weight: _setWeights[exercise.id]![setIndex],
+      showWeight: exercise.tracksWeight,
+      completed: _setCompleted[exercise.id]![setIndex],
+      onCompletedChanged: (value) {
+        setState(() => _setCompleted[exercise.id]![setIndex] = value);
+        _checkExerciseCompletion(exercise);
+      },
+      onRepsChanged: (reps) {
+        setState(() => _setReps[exercise.id]![setIndex] = reps);
+      },
+      onWeightTap: () => _editWeight(exercise, setIndex),
+      onDelete: () {
+        setState(() {
+          _setReps[exercise.id]!.removeAt(setIndex);
+          _setCompleted[exercise.id]!.removeAt(setIndex);
+          _setWeights[exercise.id]!.removeAt(setIndex);
+        });
+      },
     );
   }
 
-  Widget _buildRepsControls(
-    Exercise exercise,
-    int setIndex,
-    bool isSetCompleted,
-  ) {
-    final reps = _setReps[exercise.id]![setIndex];
-
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        // Reps Controls
-        Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              onPressed: reps > 0
-                  ? () {
-                      setState(() {
-                        _setReps[exercise.id]![setIndex] = reps - 1;
-                      });
-                    }
-                  : null,
-              icon: const Icon(Icons.remove_circle_outline),
-              color: AppColors.primary,
-              iconSize: 28,
-              visualDensity: VisualDensity.compact,
-            ),
-            Container(
-              width: 50,
-              height: 40,
-              decoration: BoxDecoration(
-                color: AppColors.primary.withValues(alpha: 0.2),
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: AppColors.primary, width: 2),
-              ),
-              child: Center(
-                child: Text(
-                  '$reps',
-                  style: AppTextStyles.stat.copyWith(
-                    color: AppColors.primary,
-                    fontSize: 20,
-                  ),
-                ),
-              ),
-            ),
-            IconButton(
-              onPressed: () {
-                setState(() {
-                  _setReps[exercise.id]![setIndex] = reps + 1;
-                });
-              },
-              icon: const Icon(Icons.add_circle),
-              color: AppColors.primary,
-              iconSize: 28,
-              visualDensity: VisualDensity.compact,
-            ),
-          ],
-        ),
-        // Reps Label Below Controls
-        const SizedBox(height: 4),
-        Text(
-          'Reps',
-          style: AppTextStyles.bodySmall.copyWith(
-            color: isSetCompleted ? AppColors.success : AppColors.textTertiary,
-          ),
-        ),
-      ],
+  Future<void> _editWeight(Exercise exercise, int setIndex) async {
+    final weights = _setWeights[exercise.id]!;
+    final result = await showDialog<_WeightInput>(
+      context: context,
+      builder: (_) =>
+          _WeightDialog(setNumber: setIndex + 1, initial: weights[setIndex]),
     );
+    if (result == null || !mounted) return;
+    setState(() => weights[setIndex] = result.weight);
   }
 
   void _showHistory(BuildContext context, Exercise exercise) {
@@ -629,7 +543,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
                               ),
                               const SizedBox(height: 4),
                               Text(
-                                '${completion.maxSets} sets × ${completion.maxReps} reps',
+                                _formatCompletion(completion),
                                 style: AppTextStyles.h3.copyWith(
                                   color: AppColors.primary,
                                 ),
@@ -664,17 +578,6 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
             ],
           ),
         ),
-      ),
-    );
-  }
-
-  void _startRestTimer(BuildContext context, Exercise exercise) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (dialogContext) => _RestTimerDialog(
-        restSeconds: exercise.restSeconds,
-        exerciseName: exercise.name,
       ),
     );
   }
@@ -793,7 +696,7 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
     }
 
     // Build exercise progress map from set reps
-    final exerciseProgress = <String, Map<String, int>>{};
+    final exerciseProgress = <String, ExerciseResult>{};
 
     for (var exercise in widget.day.exercises) {
       final sets = _setReps[exercise.id] ?? [];
@@ -804,7 +707,18 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
         final maxSets = sets.length;
         final maxReps = sets.reduce((a, b) => a > b ? a : b);
 
-        exerciseProgress[exercise.id] = {'sets': maxSets, 'reps': maxReps};
+        final weights = (_setWeights[exercise.id] ?? []).nonNulls;
+        final target = _newTargets[exercise.id];
+        exerciseProgress[exercise.id] = ExerciseResult(
+          sets: maxSets,
+          reps: maxReps,
+          targetSets: target?.sets,
+          targetReps: target?.reps,
+          targetWeight: target?.weight,
+          maxWeight: exercise.tracksWeight && weights.isNotEmpty
+              ? weights.reduce((a, b) => a > b ? a : b)
+              : null,
+        );
       }
     }
 
@@ -828,236 +742,107 @@ class _ActiveDayPageState extends State<ActiveDayPage> {
     Navigator.pop(context);
   }
 
+  String _formatCompletion(ExerciseCompletion completion) {
+    final base = '${completion.maxSets} sets × ${completion.maxReps} reps';
+    final weight = completion.maxWeight;
+    return weight == null ? base : '$base · ${formatWeight(weight)} kg';
+  }
+
   String _formatDate(DateTime date) {
     return '${date.day}/${date.month}/${date.year}';
   }
 }
 
-// Rest Timer Dialog Widget
-class _RestTimerDialog extends StatefulWidget {
-  final int restSeconds;
-  final String exerciseName;
+/// Result of the weight dialog; a null [weight] clears the set's weight.
+class _WeightInput {
+  final double? weight;
 
-  const _RestTimerDialog({
-    required this.restSeconds,
-    required this.exerciseName,
-  });
-
-  @override
-  State<_RestTimerDialog> createState() => _RestTimerDialogState();
+  const _WeightInput(this.weight);
 }
 
-class _RestTimerDialogState extends State<_RestTimerDialog> {
-  late int _remainingSeconds;
-  late Timer _timer;
-  bool _hasPlayedWarning = false;
+class _WeightDialog extends StatefulWidget {
+  final int setNumber;
+  final double? initial;
+
+  const _WeightDialog({required this.setNumber, required this.initial});
+
+  @override
+  State<_WeightDialog> createState() => _WeightDialogState();
+}
+
+class _WeightDialogState extends State<_WeightDialog> {
+  late final TextEditingController _controller;
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _remainingSeconds = widget.restSeconds;
-    _startTimer();
-  }
-
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      setState(() {
-        if (_remainingSeconds > 0) {
-          _remainingSeconds--;
-
-          // Trigger warning at 3 seconds remaining
-          if (_remainingSeconds == 3 && !_hasPlayedWarning) {
-            _hasPlayedWarning = true;
-            _playWarning();
-          }
-
-          // Timer finished
-          if (_remainingSeconds == 0) {
-            _timer.cancel();
-            _playFinishSound();
-            // Auto-close after 2 seconds
-            Future.delayed(const Duration(seconds: 2), () {
-              if (mounted) {
-                Navigator.of(context).pop();
-              }
-            });
-          }
-        }
-      });
-    });
-  }
-
-  Future<void> _playWarning() async {
-    // Vibrate 3 times (short pulses)
-    try {
-      final hasVibrator = await Vibration.hasVibrator();
-      if (hasVibrator == true) {
-        Vibration.vibrate(
-          pattern: [0, 200, 100, 200, 100, 200],
-          intensities: [0, 128, 0, 128, 0, 128],
-        );
-      }
-    } catch (e) {
-      // Vibration not supported on this device
-    }
-  }
-
-  Future<void> _playFinishSound() async {
-    // Vibrate with long pulse
-    try {
-      final hasVibrator = await Vibration.hasVibrator();
-      if (hasVibrator == true) {
-        Vibration.vibrate(duration: 500);
-      }
-    } catch (e) {
-      // Vibration not supported on this device
-    }
+    final initial = widget.initial;
+    _controller = TextEditingController(
+      text: initial == null ? '' : formatWeight(initial),
+    );
   }
 
   @override
   void dispose() {
-    _timer.cancel();
+    _controller.dispose();
     super.dispose();
+  }
+
+  static double? _parse(String text) =>
+      double.tryParse(text.trim().replaceAll(',', '.'));
+
+  String? _validate(String? value) {
+    if (value == null || value.trim().isEmpty) return null;
+    final weight = _parse(value);
+    if (weight == null || weight < 0 || weight > 1000) return 'Invalid';
+    return null;
+  }
+
+  void _save() {
+    if (!_formKey.currentState!.validate()) return;
+    final text = _controller.text.trim();
+    Navigator.pop(context, _WeightInput(text.isEmpty ? null : _parse(text)));
   }
 
   @override
   Widget build(BuildContext context) {
-    final progress = _remainingSeconds / widget.restSeconds;
-    final isWarning = _remainingSeconds <= 3 && _remainingSeconds > 0;
-    final isFinished = _remainingSeconds == 0;
-
-    return Dialog(
-      backgroundColor: Colors.transparent,
-      child: Container(
-        padding: const EdgeInsets.all(32),
-        decoration: BoxDecoration(
-          color: AppColors.background,
-          borderRadius: BorderRadius.circular(24),
-          border: Border.all(
-            color: isFinished
-                ? AppColors.success
-                : isWarning
-                ? AppColors.warning
-                : AppColors.primary,
-            width: 3,
+    return AlertDialog(
+      backgroundColor: AppColors.background,
+      title: Text('Set ${widget.setNumber} weight', style: AppTextStyles.h3),
+      content: Form(
+        key: _formKey,
+        child: TextFormField(
+          controller: _controller,
+          autofocus: true,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true),
+          style: AppTextStyles.bodyLarge,
+          decoration: const InputDecoration(
+            labelText: 'Weight',
+            suffixText: 'kg',
+            filled: true,
+            fillColor: AppColors.surface,
           ),
-          boxShadow: [
-            BoxShadow(
-              color:
-                  (isFinished
-                          ? AppColors.success
-                          : isWarning
-                          ? AppColors.warning
-                          : AppColors.primary)
-                      .withValues(alpha: 0.3),
-              blurRadius: 30,
-              spreadRadius: 5,
-            ),
-          ],
-        ),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            // Title
-            Text(
-              'Rest Timer',
-              style: AppTextStyles.h2.copyWith(
-                color: isFinished
-                    ? AppColors.success
-                    : isWarning
-                    ? AppColors.warning
-                    : AppColors.primary,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              widget.exerciseName,
-              style: AppTextStyles.bodyMedium.copyWith(
-                color: AppColors.textSecondary,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 32),
-
-            // Circular Progress with Timer
-            SizedBox(
-              width: 200,
-              height: 200,
-              child: Stack(
-                alignment: Alignment.center,
-                children: [
-                  // Circular Progress Indicator
-                  SizedBox(
-                    width: 200,
-                    height: 200,
-                    child: CircularProgressIndicator(
-                      value: progress,
-                      strokeWidth: 12,
-                      backgroundColor: AppColors.surface,
-                      valueColor: AlwaysStoppedAnimation(
-                        isFinished
-                            ? AppColors.success
-                            : isWarning
-                            ? AppColors.warning
-                            : AppColors.primary,
-                      ),
-                    ),
-                  ),
-                  // Timer Text
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      Text(
-                        isFinished ? 'DONE!' : '$_remainingSeconds',
-                        style: AppTextStyles.stat.copyWith(
-                          fontSize: isFinished ? 48 : 72,
-                          color: isFinished
-                              ? AppColors.success
-                              : isWarning
-                              ? AppColors.warning
-                              : AppColors.primary,
-                        ),
-                      ),
-                      if (!isFinished)
-                        Text(
-                          'seconds',
-                          style: AppTextStyles.bodyMedium.copyWith(
-                            color: AppColors.textSecondary,
-                          ),
-                        ),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-
-            const SizedBox(height: 32),
-
-            // Close Button
-            SizedBox(
-              width: double.infinity,
-              child: ElevatedButton(
-                onPressed: () => Navigator.pop(context),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: isFinished
-                      ? AppColors.success
-                      : isWarning
-                      ? AppColors.warning
-                      : AppColors.primary,
-                  padding: const EdgeInsets.symmetric(vertical: 16),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                ),
-                child: Text(
-                  isFinished ? 'CLOSE' : 'SKIP',
-                  style: AppTextStyles.button.copyWith(color: Colors.white),
-                ),
-              ),
-            ),
-          ],
+          validator: _validate,
+          onFieldSubmitted: (_) => _save(),
         ),
       ),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.pop(context, const _WeightInput(null)),
+          child: Text(
+            'Clear',
+            style: AppTextStyles.button.copyWith(
+              color: AppColors.textSecondary,
+            ),
+          ),
+        ),
+        ElevatedButton(
+          onPressed: _save,
+          style: ElevatedButton.styleFrom(backgroundColor: AppColors.primary),
+          child: Text('Save', style: AppTextStyles.button),
+        ),
+      ],
     );
   }
 }

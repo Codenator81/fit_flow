@@ -1,9 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/theme/app_text_styles.dart';
 import '../../domain/entities/workout.dart';
 import '../../domain/entities/workout_day.dart';
+import '../widgets/track_weight_checkbox.dart';
 import '../bloc/workout_bloc.dart';
 import '../bloc/workout_event.dart';
 import '../bloc/workout_state.dart';
@@ -118,7 +120,7 @@ class DayDetailPage extends StatelessWidget {
     final nameController = TextEditingController();
     final setsController = TextEditingController();
     final repsController = TextEditingController();
-    final restSecondsController = TextEditingController(text: '60');
+    final trackWeight = ValueNotifier<bool>(false);
     final formKey = GlobalKey<FormState>();
 
     showDialog(
@@ -232,46 +234,8 @@ class DayDetailPage extends StatelessWidget {
                   ),
                 ],
               ),
-              const SizedBox(height: 16),
-              TextFormField(
-                controller: restSecondsController,
-                keyboardType: TextInputType.number,
-                style: AppTextStyles.bodyLarge,
-                decoration: InputDecoration(
-                  labelText: 'Rest Time (seconds)',
-                  labelStyle: AppTextStyles.bodyMedium.copyWith(
-                    color: AppColors.textSecondary,
-                  ),
-                  hintText: 'Default: 60 seconds',
-                  filled: true,
-                  fillColor: AppColors.surface,
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: BorderSide.none,
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(12),
-                    borderSide: const BorderSide(
-                      color: AppColors.primary,
-                      width: 2,
-                    ),
-                  ),
-                  prefixIcon: const Icon(Icons.timer, color: AppColors.primary),
-                ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Required';
-                  }
-                  final seconds = int.tryParse(value);
-                  if (seconds == null) {
-                    return 'Invalid';
-                  }
-                  if (seconds <= 0) {
-                    return 'Must be > 0';
-                  }
-                  return null;
-                },
-              ),
+              const SizedBox(height: 8),
+              TrackWeightCheckbox(value: trackWeight),
             ],
           ),
         ),
@@ -295,7 +259,7 @@ class DayDetailPage extends StatelessWidget {
                     exerciseName: nameController.text.trim(),
                     sets: int.parse(setsController.text),
                     reps: int.parse(repsController.text),
-                    restSeconds: int.parse(restSecondsController.text),
+                    tracksWeight: trackWeight.value,
                   ),
                 );
                 Navigator.pop(dialogContext);

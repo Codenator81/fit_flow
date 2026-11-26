@@ -34,7 +34,6 @@ void main() {
       });
 
       expect(model.exercises.single.name, 'Bench press');
-      expect(model.exercises.single.restSeconds, 60);
       expect(model.isCompleted, isTrue);
       expect(model.completedDate, DateTime.utc(2026, 2, 1, 8));
     });
@@ -59,9 +58,7 @@ void main() {
         id: 'd1',
         name: 'Pull',
         dayNumber: 4,
-        exercises: const [
-          Exercise(id: 'e1', name: 'Row', sets: 3, reps: 12, restSeconds: 45),
-        ],
+        exercises: const [Exercise(id: 'e1', name: 'Row', sets: 3, reps: 12)],
         isCompleted: true,
         isActive: true,
         completedDate: DateTime.utc(2026, 3, 10),

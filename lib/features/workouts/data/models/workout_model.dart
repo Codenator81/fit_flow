@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+
 import '../../domain/entities/workout.dart';
 import 'workout_day_model.dart';
 

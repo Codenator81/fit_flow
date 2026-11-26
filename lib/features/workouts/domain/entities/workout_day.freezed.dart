@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'workout_day.dart';
@@ -9,6 +9,7 @@ part of 'workout_day.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $WorkoutDayCopyWith<WorkoutDay> get copyWith => _$WorkoutDayCopyWithImpl<Workout
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other.exercises, exercises)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate));
+  final _this = this as WorkoutDay;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutDay&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.dayNumber, _this.dayNumber) || other.dayNumber == _this.dayNumber)&&const DeepCollectionEquality().equals(other.exercises, _this.exercises)&&(identical(other.isRestDay, _this.isRestDay) || other.isRestDay == _this.isRestDay)&&(identical(other.isCompleted, _this.isCompleted) || other.isCompleted == _this.isCompleted)&&(identical(other.isActive, _this.isActive) || other.isActive == _this.isActive)&&(identical(other.completedDate, _this.completedDate) || other.completedDate == _this.completedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(exercises),isRestDay,isCompleted,isActive,completedDate);
+int get hashCode {
+  final _this = this as WorkoutDay;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.dayNumber,const DeepCollectionEquality().hash(_this.exercises),_this.isRestDay,_this.isCompleted,_this.isActive,_this.completedDate);
+}
 
 @override
 String toString() {
-  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises, isRestDay: $isRestDay, isCompleted: $isCompleted, isActive: $isActive, completedDate: $completedDate)';
+  final _this = this as WorkoutDay;
+  return 'WorkoutDay(id: ${_this.id}, name: ${_this.name}, dayNumber: ${_this.dayNumber}, exercises: ${_this.exercises}, isRestDay: ${_this.isRestDay}, isCompleted: ${_this.isCompleted}, isActive: ${_this.isActive}, completedDate: ${_this.completedDate})';
 }
 
 
@@ -63,7 +69,7 @@ class _$WorkoutDayCopyWithImpl<$Res>
 /// Create a copy of WorkoutDay
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? dayNumber = null,Object? exercises = null,Object? isRestDay = null,Object? isCompleted = null,Object? isActive = null,Object? completedDate = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(WorkoutDay(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,dayNumber: null == dayNumber ? _self.dayNumber : dayNumber // ignore: cast_nullable_to_non_nullable
@@ -207,7 +213,7 @@ return $default(_that.id,_that.name,_that.dayNumber,_that.exercises,_that.isRest
 
 
 class _WorkoutDay implements WorkoutDay {
-  const _WorkoutDay({required this.id, required this.name, required this.dayNumber, required final  List<Exercise> exercises, this.isRestDay = false, this.isCompleted = false, this.isActive = false, this.completedDate}): _exercises = exercises;
+  const _WorkoutDay({required this.id, required this.name, required this.dayNumber, required  List<Exercise> exercises, this.isRestDay = false, this.isCompleted = false, this.isActive = false, this.completedDate}): _exercises = exercises;
   
 
 @override final  String id;
@@ -235,16 +241,18 @@ _$WorkoutDayCopyWith<_WorkoutDay> get copyWith => __$WorkoutDayCopyWithImpl<_Wor
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other._exercises, _exercises)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _WorkoutDay&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.dayNumber, dayNumber) || other.dayNumber == dayNumber)&&const DeepCollectionEquality().equals(other.exercises, _exercises)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay)&&(identical(other.isCompleted, isCompleted) || other.isCompleted == isCompleted)&&(identical(other.isActive, isActive) || other.isActive == isActive)&&(identical(other.completedDate, completedDate) || other.completedDate == completedDate));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(_exercises),isRestDay,isCompleted,isActive,completedDate);
+int get hashCode {
+    return Object.hash(runtimeType,id,name,dayNumber,const DeepCollectionEquality().hash(_exercises),isRestDay,isCompleted,isActive,completedDate);
+}
 
 @override
 String toString() {
-  return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises, isRestDay: $isRestDay, isCompleted: $isCompleted, isActive: $isActive, completedDate: $completedDate)';
+    return 'WorkoutDay(id: $id, name: $name, dayNumber: $dayNumber, exercises: $exercises, isRestDay: $isRestDay, isCompleted: $isCompleted, isActive: $isActive, completedDate: $completedDate)';
 }
 
 
