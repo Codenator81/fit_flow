@@ -5,12 +5,13 @@ import 'package:flutter_test/flutter_test.dart';
 
 import '../fakes/fake_auth_repository.dart';
 import '../fakes/fake_dependencies.dart';
+import '../goldens/golden_helpers.dart';
 
 void main() {
   testWidgets('signed-out user sees the login page', (tester) async {
     await registerFakeDependencies(user: null);
     await tester.pumpWidget(const MainApp());
-    await tester.pumpAndSettle();
+    await settleFonts(tester);
 
     expect(find.byType(LoginPage), findsOneWidget);
     expect(find.byType(HomePage), findsNothing);
@@ -19,7 +20,7 @@ void main() {
   testWidgets('signed-in user goes straight to home', (tester) async {
     await registerFakeDependencies();
     await tester.pumpWidget(const MainApp());
-    await tester.pumpAndSettle();
+    await settleFonts(tester);
 
     expect(find.byType(HomePage), findsOneWidget);
   });
@@ -27,7 +28,7 @@ void main() {
   testWidgets('tapping Continue with Google signs in', (tester) async {
     final auth = await registerFakeDependencies(user: null);
     await tester.pumpWidget(const MainApp());
-    await tester.pumpAndSettle();
+    await settleFonts(tester);
 
     await tester.tap(find.text('Continue with Google'));
     await tester.pumpAndSettle();

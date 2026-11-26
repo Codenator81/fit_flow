@@ -87,7 +87,7 @@ hide:
 
 | Layer | Technology |
 |---|---|
-| App | Flutter 3.47 (Android), Material 3 dark theme, Google Fonts (Montserrat, Roboto, Bebas Neue) |
+| App | Flutter 3.50 (Android), Material 3 dark theme, Google Fonts (Montserrat, Roboto, Bebas Neue) |
 | State | `flutter_bloc` (`WorkoutBloc`) over repository interfaces |
 | Models | Freezed (entities, events, states) and `json_serializable` (Firestore models) |
 | Dependency injection | `get_it` service locator |

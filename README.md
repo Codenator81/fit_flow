@@ -30,7 +30,7 @@ flutter pub get
 flutter run
 ```
 
-Requires Flutter 3.47.7 and an Android device or emulator. Google sign-in needs your debug key's SHA-1/SHA-256 registered in Firebase; see [Firebase](docs/architecture/firebase.md).
+Requires Flutter 3.50.1 and an Android device or emulator. Google sign-in needs your debug key's SHA-1/SHA-256 registered in Firebase; see [Firebase](docs/architecture/firebase.md).
 
 Before pushing:
 

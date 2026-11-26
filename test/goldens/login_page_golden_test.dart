@@ -1,6 +1,6 @@
 import 'package:fit_flow/core/theme/app_theme.dart';
 import 'package:fit_flow/features/auth/presentation/pages/login_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'golden_helpers.dart';

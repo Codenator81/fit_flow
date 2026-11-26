@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'exercise.dart';
@@ -9,6 +9,7 @@ part of 'exercise.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $ExerciseCompletionCopyWith<ExerciseCompletion> get copyWith => _$ExerciseComple
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExerciseCompletion&&(identical(other.date, date) || other.date == date)&&(identical(other.maxSets, maxSets) || other.maxSets == maxSets)&&(identical(other.maxReps, maxReps) || other.maxReps == maxReps));
+  final _this = this as ExerciseCompletion;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ExerciseCompletion&&(identical(other.date, _this.date) || other.date == _this.date)&&(identical(other.maxSets, _this.maxSets) || other.maxSets == _this.maxSets)&&(identical(other.maxReps, _this.maxReps) || other.maxReps == _this.maxReps));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,date,maxSets,maxReps);
+int get hashCode {
+  final _this = this as ExerciseCompletion;
+  return Object.hash(runtimeType,_this.date,_this.maxSets,_this.maxReps);
+}
 
 @override
 String toString() {
-  return 'ExerciseCompletion(date: $date, maxSets: $maxSets, maxReps: $maxReps)';
+  final _this = this as ExerciseCompletion;
+  return 'ExerciseCompletion(date: ${_this.date}, maxSets: ${_this.maxSets}, maxReps: ${_this.maxReps})';
 }
 
 
@@ -63,7 +69,7 @@ class _$ExerciseCompletionCopyWithImpl<$Res>
 /// Create a copy of ExerciseCompletion
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? date = null,Object? maxSets = null,Object? maxReps = null,}) {
-  return _then(_self.copyWith(
+  return _then(ExerciseCompletion(
 date: null == date ? _self.date : date // ignore: cast_nullable_to_non_nullable
 as DateTime,maxSets: null == maxSets ? _self.maxSets : maxSets // ignore: cast_nullable_to_non_nullable
 as int,maxReps: null == maxReps ? _self.maxReps : maxReps // ignore: cast_nullable_to_non_nullable
@@ -219,16 +225,18 @@ _$ExerciseCompletionCopyWith<_ExerciseCompletion> get copyWith => __$ExerciseCom
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExerciseCompletion&&(identical(other.date, date) || other.date == date)&&(identical(other.maxSets, maxSets) || other.maxSets == maxSets)&&(identical(other.maxReps, maxReps) || other.maxReps == maxReps));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ExerciseCompletion&&(identical(other.date, date) || other.date == date)&&(identical(other.maxSets, maxSets) || other.maxSets == maxSets)&&(identical(other.maxReps, maxReps) || other.maxReps == maxReps));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,date,maxSets,maxReps);
+int get hashCode {
+    return Object.hash(runtimeType,date,maxSets,maxReps);
+}
 
 @override
 String toString() {
-  return 'ExerciseCompletion(date: $date, maxSets: $maxSets, maxReps: $maxReps)';
+    return 'ExerciseCompletion(date: $date, maxSets: $maxSets, maxReps: $maxReps)';
 }
 
 
@@ -282,16 +290,21 @@ $ExerciseCopyWith<Exercise> get copyWith => _$ExerciseCopyWithImpl<Exercise>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Exercise&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds)&&const DeepCollectionEquality().equals(other.history, history));
+  final _this = this as Exercise;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Exercise&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.sets, _this.sets) || other.sets == _this.sets)&&(identical(other.reps, _this.reps) || other.reps == _this.reps)&&(identical(other.restSeconds, _this.restSeconds) || other.restSeconds == _this.restSeconds)&&const DeepCollectionEquality().equals(other.history, _this.history));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,sets,reps,restSeconds,const DeepCollectionEquality().hash(history));
+int get hashCode {
+  final _this = this as Exercise;
+  return Object.hash(runtimeType,_this.id,_this.name,_this.sets,_this.reps,_this.restSeconds,const DeepCollectionEquality().hash(_this.history));
+}
 
 @override
 String toString() {
-  return 'Exercise(id: $id, name: $name, sets: $sets, reps: $reps, restSeconds: $restSeconds, history: $history)';
+  final _this = this as Exercise;
+  return 'Exercise(id: ${_this.id}, name: ${_this.name}, sets: ${_this.sets}, reps: ${_this.reps}, restSeconds: ${_this.restSeconds}, history: ${_this.history})';
 }
 
 
@@ -320,7 +333,7 @@ class _$ExerciseCopyWithImpl<$Res>
 /// Create a copy of Exercise
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? sets = null,Object? reps = null,Object? restSeconds = null,Object? history = null,}) {
-  return _then(_self.copyWith(
+  return _then(Exercise(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,sets: null == sets ? _self.sets : sets // ignore: cast_nullable_to_non_nullable
@@ -462,7 +475,7 @@ return $default(_that.id,_that.name,_that.sets,_that.reps,_that.restSeconds,_tha
 
 
 class _Exercise implements Exercise {
-  const _Exercise({required this.id, required this.name, required this.sets, required this.reps, this.restSeconds = 60, final  List<ExerciseCompletion> history = const []}): _history = history;
+  const _Exercise({required this.id, required this.name, required this.sets, required this.reps, this.restSeconds = 60,  List<ExerciseCompletion> history = const []}): _history = history;
   
 
 @override final  String id;
@@ -488,16 +501,18 @@ _$ExerciseCopyWith<_Exercise> get copyWith => __$ExerciseCopyWithImpl<_Exercise>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Exercise&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds)&&const DeepCollectionEquality().equals(other._history, _history));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Exercise&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds)&&const DeepCollectionEquality().equals(other.history, _history));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,name,sets,reps,restSeconds,const DeepCollectionEquality().hash(_history));
+int get hashCode {
+    return Object.hash(runtimeType,id,name,sets,reps,restSeconds,const DeepCollectionEquality().hash(_history));
+}
 
 @override
 String toString() {
-  return 'Exercise(id: $id, name: $name, sets: $sets, reps: $reps, restSeconds: $restSeconds, history: $history)';
+    return 'Exercise(id: $id, name: $name, sets: $sets, reps: $reps, restSeconds: $restSeconds, history: $history)';
 }
 
 

@@ -11,6 +11,9 @@ class AuthRepositoryImpl implements AuthRepository {
 
   AuthRepositoryImpl({required this.auth, required this.googleSignIn});
 
+  // google_sign_in 7 must be initialized exactly once before authenticate().
+  Future<void>? _googleInit;
+
   @override
   Stream<AuthUser?> authStateChanges() => auth.authStateChanges().map(_toUser);
 
@@ -20,18 +23,18 @@ class AuthRepositoryImpl implements AuthRepository {
   @override
   Future<Either<Failure, Unit>> signInWithGoogle() async {
     try {
-      final googleUser = await googleSignIn.signIn();
-      // The user closed the Google account picker.
-      if (googleUser == null) return const Right(unit);
-
-      final googleAuth = await googleUser.authentication;
+      await (_googleInit ??= googleSignIn.initialize());
+      final googleUser = await googleSignIn.authenticate();
       final credential = GoogleAuthProvider.credential(
-        accessToken: googleAuth.accessToken,
-        idToken: googleAuth.idToken,
+        idToken: googleUser.authentication.idToken,
       );
       // AuthGate reacts to the auth state change and shows the home screen.
       await auth.signInWithCredential(credential);
       return const Right(unit);
+    } on GoogleSignInException catch (e) {
+      // The user closed the Google account picker.
+      if (e.code == GoogleSignInExceptionCode.canceled) return const Right(unit);
+      return const Left(AuthFailure('Google sign-in failed. Please try again.'));
     } on FirebaseAuthException catch (e) {
       return Left(AuthFailure(e.message ?? 'Authentication failed'));
     } catch (_) {

@@ -7,7 +7,7 @@ import 'package:fit_flow/features/auth/domain/repositories/auth_repository.dart'
 
 /// Signed-in (or signed-out) user without Firebase or Google.
 class FakeAuthRepository implements AuthRepository {
-  FakeAuthRepository({AuthUser? user}) : _user = user;
+  FakeAuthRepository({this._user});
 
   AuthUser? _user;
   final _changes = StreamController<AuthUser?>.broadcast();

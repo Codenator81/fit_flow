@@ -18,7 +18,7 @@ void initDependencies() {
   sl
     ..registerLazySingleton<FirebaseAuth>(() => FirebaseAuth.instance)
     ..registerLazySingleton<FirebaseFirestore>(() => FirebaseFirestore.instance)
-    ..registerLazySingleton<GoogleSignIn>(GoogleSignIn.new)
+    ..registerLazySingleton<GoogleSignIn>(() => GoogleSignIn.instance)
     ..registerLazySingleton<AuthRepository>(
       () => AuthRepositoryImpl(auth: sl(), googleSignIn: sl()),
     )

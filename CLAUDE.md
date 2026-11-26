@@ -866,12 +866,12 @@ auth.authStateChanges().listen((User? user) {
   }
 });
 
-// Google Sign-In
-final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-final GoogleSignInAuthentication googleAuth = await googleUser!.authentication;
+// Google Sign-In (google_sign_in 7: initialize once, then authenticate)
+await GoogleSignIn.instance.initialize();
+final GoogleSignInAccount googleUser =
+    await GoogleSignIn.instance.authenticate();
 final credential = GoogleAuthProvider.credential(
-  accessToken: googleAuth.accessToken,
-  idToken: googleAuth.idToken,
+  idToken: googleUser.authentication.idToken,
 );
 await auth.signInWithCredential(credential);
 ```

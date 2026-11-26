@@ -4,7 +4,7 @@
 
 | Tool | Version |
 |---|---|
-| Flutter | **3.47.7** (pinned in `pubspec.yaml` under `environment.flutter`; CI reads it from there) |
+| Flutter | **3.50.1** (pinned in `pubspec.yaml` under `environment.flutter`; CI reads it from there) |
 | Android SDK | API 36 platform tools; an emulator or a phone with USB debugging |
 | Java | 17 or newer (CI uses 17) |
 | Firebase CLI | Only to deploy Firestore rules and indexes |

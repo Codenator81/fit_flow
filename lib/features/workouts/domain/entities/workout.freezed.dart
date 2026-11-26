@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'workout.dart';
@@ -9,6 +9,7 @@ part of 'workout.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $WorkoutCopyWith<Workout> get copyWith => _$WorkoutCopyWithImpl<Workout>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Workout&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.days, days)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+  final _this = this as Workout;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Workout&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.name, _this.name) || other.name == _this.name)&&const DeepCollectionEquality().equals(other.days, _this.days)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt)&&(identical(other.updatedAt, _this.updatedAt) || other.updatedAt == _this.updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,name,const DeepCollectionEquality().hash(days),createdAt,updatedAt);
+int get hashCode {
+  final _this = this as Workout;
+  return Object.hash(runtimeType,_this.id,_this.userId,_this.name,const DeepCollectionEquality().hash(_this.days),_this.createdAt,_this.updatedAt);
+}
 
 @override
 String toString() {
-  return 'Workout(id: $id, userId: $userId, name: $name, days: $days, createdAt: $createdAt, updatedAt: $updatedAt)';
+  final _this = this as Workout;
+  return 'Workout(id: ${_this.id}, userId: ${_this.userId}, name: ${_this.name}, days: ${_this.days}, createdAt: ${_this.createdAt}, updatedAt: ${_this.updatedAt})';
 }
 
 
@@ -63,7 +69,7 @@ class _$WorkoutCopyWithImpl<$Res>
 /// Create a copy of Workout
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? userId = null,Object? name = null,Object? days = null,Object? createdAt = null,Object? updatedAt = null,}) {
-  return _then(_self.copyWith(
+  return _then(Workout(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,userId: null == userId ? _self.userId : userId // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
@@ -205,7 +211,7 @@ return $default(_that.id,_that.userId,_that.name,_that.days,_that.createdAt,_tha
 
 
 class _Workout implements Workout {
-  const _Workout({required this.id, required this.userId, required this.name, required final  List<WorkoutDay> days, required this.createdAt, required this.updatedAt}): _days = days;
+  const _Workout({required this.id, required this.userId, required this.name, required  List<WorkoutDay> days, required this.createdAt, required this.updatedAt}): _days = days;
   
 
 @override final  String id;
@@ -231,16 +237,18 @@ _$WorkoutCopyWith<_Workout> get copyWith => __$WorkoutCopyWithImpl<_Workout>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Workout&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other._days, _days)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Workout&&(identical(other.id, id) || other.id == id)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.name, name) || other.name == name)&&const DeepCollectionEquality().equals(other.days, _days)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt)&&(identical(other.updatedAt, updatedAt) || other.updatedAt == updatedAt));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,userId,name,const DeepCollectionEquality().hash(_days),createdAt,updatedAt);
+int get hashCode {
+    return Object.hash(runtimeType,id,userId,name,const DeepCollectionEquality().hash(_days),createdAt,updatedAt);
+}
 
 @override
 String toString() {
-  return 'Workout(id: $id, userId: $userId, name: $name, days: $days, createdAt: $createdAt, updatedAt: $updatedAt)';
+    return 'Workout(id: $id, userId: $userId, name: $name, days: $days, createdAt: $createdAt, updatedAt: $updatedAt)';
 }
 
 

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'workout_event.dart';
@@ -9,6 +9,7 @@ part of 'workout_event.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -20,7 +21,7 @@ mixin _$WorkoutEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutEvent);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is WorkoutEvent);
 }
 
 
@@ -29,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'WorkoutEvent()';
+    return 'WorkoutEvent()';
 }
 
 
@@ -239,7 +240,7 @@ class LoadWorkouts implements WorkoutEvent {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadWorkouts);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadWorkouts);
 }
 
 
@@ -248,7 +249,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'WorkoutEvent.loadWorkouts()';
+    return 'WorkoutEvent.loadWorkouts()';
 }
 
 
@@ -276,16 +277,18 @@ $CreateWorkoutCopyWith<CreateWorkout> get copyWith => _$CreateWorkoutCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkout&&(identical(other.name, name) || other.name == name));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CreateWorkout&&(identical(other.name, name) || other.name == name));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name);
+int get hashCode {
+    return Object.hash(runtimeType,name);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.createWorkout(name: $name)';
+    return 'WorkoutEvent.createWorkout(name: $name)';
 }
 
 
@@ -342,16 +345,18 @@ $DeleteWorkoutCopyWith<DeleteWorkout> get copyWith => _$DeleteWorkoutCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteWorkout&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteWorkout&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.deleteWorkout(workoutId: $workoutId)';
+    return 'WorkoutEvent.deleteWorkout(workoutId: $workoutId)';
 }
 
 
@@ -408,16 +413,18 @@ $LoadWorkoutDetailCopyWith<LoadWorkoutDetail> get copyWith => _$LoadWorkoutDetai
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadWorkoutDetail&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadWorkoutDetail&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.loadWorkoutDetail(workoutId: $workoutId)';
+    return 'WorkoutEvent.loadWorkoutDetail(workoutId: $workoutId)';
 }
 
 
@@ -476,16 +483,18 @@ $AddDayCopyWith<AddDay> get copyWith => _$AddDayCopyWithImpl<AddDay>(this, _$ide
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayName, dayName) || other.dayName == dayName)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayName, dayName) || other.dayName == dayName)&&(identical(other.isRestDay, isRestDay) || other.isRestDay == isRestDay));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayName,isRestDay);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayName,isRestDay);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.addDay(workoutId: $workoutId, dayName: $dayName, isRestDay: $isRestDay)';
+    return 'WorkoutEvent.addDay(workoutId: $workoutId, dayName: $dayName, isRestDay: $isRestDay)';
 }
 
 
@@ -545,16 +554,18 @@ $DeleteDayCopyWith<DeleteDay> get copyWith => _$DeleteDayCopyWithImpl<DeleteDay>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is DeleteDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.deleteDay(workoutId: $workoutId, dayId: $dayId)';
+    return 'WorkoutEvent.deleteDay(workoutId: $workoutId, dayId: $dayId)';
 }
 
 
@@ -617,16 +628,18 @@ $AddExerciseCopyWith<AddExercise> get copyWith => _$AddExerciseCopyWithImpl<AddE
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExercise&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is AddExercise&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&(identical(other.exerciseName, exerciseName) || other.exerciseName == exerciseName)&&(identical(other.sets, sets) || other.sets == sets)&&(identical(other.reps, reps) || other.reps == reps)&&(identical(other.restSeconds, restSeconds) || other.restSeconds == restSeconds));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayId,exerciseName,sets,reps,restSeconds);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayId,exerciseName,sets,reps,restSeconds);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.addExercise(workoutId: $workoutId, dayId: $dayId, exerciseName: $exerciseName, sets: $sets, reps: $reps, restSeconds: $restSeconds)';
+    return 'WorkoutEvent.addExercise(workoutId: $workoutId, dayId: $dayId, exerciseName: $exerciseName, sets: $sets, reps: $reps, restSeconds: $restSeconds)';
 }
 
 
@@ -673,7 +686,7 @@ as int,
 
 
 class CompleteDay implements WorkoutEvent {
-  const CompleteDay({required this.workoutId, required this.dayId, required final  Map<String, Map<String, int>> exerciseProgress}): _exerciseProgress = exerciseProgress;
+  const CompleteDay({required this.workoutId, required this.dayId, required  Map<String, Map<String, int>> exerciseProgress}): _exerciseProgress = exerciseProgress;
   
 
  final  String workoutId;
@@ -696,16 +709,18 @@ $CompleteDayCopyWith<CompleteDay> get copyWith => _$CompleteDayCopyWithImpl<Comp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CompleteDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&const DeepCollectionEquality().equals(other._exerciseProgress, _exerciseProgress));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is CompleteDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId)&&const DeepCollectionEquality().equals(other.exerciseProgress, _exerciseProgress));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayId,const DeepCollectionEquality().hash(_exerciseProgress));
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayId,const DeepCollectionEquality().hash(_exerciseProgress));
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.completeDay(workoutId: $workoutId, dayId: $dayId, exerciseProgress: $exerciseProgress)';
+    return 'WorkoutEvent.completeDay(workoutId: $workoutId, dayId: $dayId, exerciseProgress: $exerciseProgress)';
 }
 
 
@@ -765,16 +780,18 @@ $MarkRestDayCompleteCopyWith<MarkRestDayComplete> get copyWith => _$MarkRestDayC
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MarkRestDayComplete&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is MarkRestDayComplete&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.markRestDayComplete(workoutId: $workoutId, dayId: $dayId)';
+    return 'WorkoutEvent.markRestDayComplete(workoutId: $workoutId, dayId: $dayId)';
 }
 
 
@@ -832,16 +849,18 @@ $ResetWorkoutCopyWith<ResetWorkout> get copyWith => _$ResetWorkoutCopyWithImpl<R
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResetWorkout&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ResetWorkout&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.resetWorkout(workoutId: $workoutId)';
+    return 'WorkoutEvent.resetWorkout(workoutId: $workoutId)';
 }
 
 
@@ -899,16 +918,18 @@ $SetActiveDayCopyWith<SetActiveDay> get copyWith => _$SetActiveDayCopyWithImpl<S
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is SetActiveDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is SetActiveDay&&(identical(other.workoutId, workoutId) || other.workoutId == workoutId)&&(identical(other.dayId, dayId) || other.dayId == dayId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,workoutId,dayId);
+int get hashCode {
+    return Object.hash(runtimeType,workoutId,dayId);
+}
 
 @override
 String toString() {
-  return 'WorkoutEvent.setActiveDay(workoutId: $workoutId, dayId: $dayId)';
+    return 'WorkoutEvent.setActiveDay(workoutId: $workoutId, dayId: $dayId)';
 }
 
 

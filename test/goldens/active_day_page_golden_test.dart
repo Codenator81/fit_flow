@@ -3,7 +3,7 @@ import 'package:fit_flow/features/workouts/domain/entities/exercise.dart';
 import 'package:fit_flow/features/workouts/domain/entities/workout.dart';
 import 'package:fit_flow/features/workouts/domain/entities/workout_day.dart';
 import 'package:fit_flow/features/workouts/presentation/pages/active_day_page.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 import 'golden_helpers.dart';
